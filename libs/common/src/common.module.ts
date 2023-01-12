@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
-import { CommonService } from './common.service';
+import { ApiService } from './api/api.service';
+import {HttpModule} from "@nestjs/axios";
 
 @Module({
-  providers: [CommonService],
-  exports: [CommonService],
+  imports: [HttpModule],
+  providers: [ApiService],
+  exports: [ApiService],
 })
 export class CommonModule {}

@@ -2,15 +2,8 @@
 export default () => {
   return {
     scrapper_name: process.env.SCRAPPER_NAME,
-    getTypeOrmConfig: async () => {
-      return {
-        type: 'postgres',
-        host: process.env.DATABASE_HOST,
-        username: process.env.DATABASE_USER,
-        password: process.env.DATABASE_PASSWORD,
-        database: process.env.DATABASE_NAME,
-        port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
-      };
-    },
+    delay_between_runs: process.env.DELAY_BETWEEN_RUNS,
+    api_url: process.env.API_URL,
+    api_key: process.env.API_KEY,
   };
 };
