@@ -1,7 +1,7 @@
 export interface IDocumentIncomingDTO {
   title: string;
   project?: string;
-  identifier: string;
+  identifier?: string;
   publicationDate: string;
   source: string;
   status: string;

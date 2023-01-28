@@ -25,7 +25,7 @@ export class SuitService {
 
   async chooseAndRunCrawler() {
     switch (this.configService.get('scrapper_name')) {
-      case 'cdep':
+      case 'camera_deputatilor':
         return await CDEP_crawler();
       case 'senat':
         return;
@@ -61,11 +61,11 @@ export class SuitService {
   async updateDocumentsForProject(projectId: string, documents: any[], remoteDocuments: IDocumentOutgoingDTO[], source: string) {
     for (const document of documents) {
       try {
-        const md5File = await getFileHash(document.link);
         const remoteDocument = remoteDocuments.find((doc) => {
           return doc.title === document.name && doc.link === document.link;
         });
         if (!remoteDocument && document.name) {
+          const md5File = await getFileHash(document.link);
           console.log('Create document', document.link);
           await this.apiService.createDocument({
             identifier: md5File,
@@ -76,9 +76,6 @@ export class SuitService {
             source,
             status: 'nou',
           });
-        } else if (remoteDocument.identifier !== md5File && document.name) {
-          // TODO: should update the document
-          console.log('Document should be updated', document.link);
         }
       } catch (e: any) {
         console.log(e);

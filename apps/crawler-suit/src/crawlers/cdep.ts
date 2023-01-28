@@ -30,7 +30,7 @@ export async function CDEP_crawler() {
 //JSON init
   let cdepJson =
     {
-      "cdep":{}
+      "camera_deputatilor":{}
     };
   var jsonObj = [] ;
 
@@ -98,7 +98,7 @@ export async function CDEP_crawler() {
   jsonObj.push(await Promise.resolve(newJsonForFreeRange));
 
 //Full PDF
-  cdepJson.cdep = jsonObj;
+  cdepJson.camera_deputatilor = jsonObj;
   console.log(JSON.stringify(cdepJson,null,'\t'));
 
 // //write file
