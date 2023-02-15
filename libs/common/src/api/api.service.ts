@@ -3,7 +3,7 @@ import {ConfigService} from "@nestjs/config";
 import {HttpService} from "@nestjs/axios";
 import {Project} from "@app/common/interfaces/Project";
 import {firstValueFrom} from "rxjs";
-import {IDocumentIncomingDTO, IDocumentOutgoingDTO} from "@app/common/interfaces/Document";
+import {IDocumentIncomingDTO, IDocumentOutgoingDTO, Status} from "@app/common/interfaces/Document";
 
 @Injectable()
 export class ApiService {
@@ -23,7 +23,6 @@ export class ApiService {
   }
 
   async getProjects(): Promise<Project[]> {
-    console.log(`${this.baseUrl}/project`)
     const result = await firstValueFrom(this.httpService.get(`${this.baseUrl}/project`, {
       headers: {
         'Content-Type': 'application/json',
@@ -34,7 +33,6 @@ export class ApiService {
   }
 
   async findProjectBy({ title }): Promise<Project[]> {
-    console.log(`${this.baseUrl}/project/find?title=${title}`)
     const result = await firstValueFrom(this.httpService.get(`${this.baseUrl}/project/find?title=${encodeURIComponent(title)}`, {
       headers: {
         'Content-Type': 'application/json',
@@ -45,7 +43,6 @@ export class ApiService {
   }
 
   async findDocumentBy({ project }): Promise<IDocumentOutgoingDTO[]> {
-    console.log(`${this.baseUrl}/document?project=${encodeURIComponent(project)}`)
     const result = await firstValueFrom(this.httpService.get(`${this.baseUrl}/document?project=${encodeURIComponent(project)}`, {
       headers: {
         'Content-Type': 'application/json',
@@ -55,14 +52,45 @@ export class ApiService {
     return result.data;
   }
 
-  async createDocument(document: IDocumentIncomingDTO): Promise<IDocumentOutgoingDTO[]> {
-    console.log(document)
+  async createDocument(document: IDocumentIncomingDTO): Promise<IDocumentOutgoingDTO> {
     const result = await firstValueFrom(this.httpService.post(`${this.baseUrl}/document`, document, {
       headers: {
         'Content-Type': 'application/json',
         'authorization': this.configService.get('api_key'),
       }
     }));
+    return result.data;
+  }
+
+  async updateDocument(documentId: string, data: any) {
+    const result = await firstValueFrom(this.httpService.put(`${this.baseUrl}/document/${documentId}`, data, {
+      headers: {
+        'Content-Type': 'application/json',
+        'authorization': this.configService.get('api_key'),
+      }
+    }));
+    return result.data;
+  }
+
+  async getDocument(documentId: string): Promise<IDocumentOutgoingDTO> {
+    const result = await firstValueFrom(this.httpService.get(`${this.baseUrl}/document/${documentId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'authorization': this.configService.get('api_key'),
+      }
+    }));
+
+    return result.data;
+  }
+
+  async updateDocumentStatus(documentId: string, status: Status) {
+    const result = await firstValueFrom(this.httpService.put(`${this.baseUrl}/document/${documentId}`, { status }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'authorization': this.configService.get('api_key'),
+      }
+    }));
+
     return result.data;
   }
 }

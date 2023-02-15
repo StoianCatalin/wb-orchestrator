@@ -1,3 +1,10 @@
+export enum Status {
+  NOU = 'nou',
+  IN_ANALIZA = 'in analiza',
+  REVIZUIT = 'revizuit',
+}
+
+
 export interface IDocumentIncomingDTO {
   title: string;
   project?: string;
@@ -6,6 +13,7 @@ export interface IDocumentIncomingDTO {
   source: string;
   status: string;
   link?: string;
+  storagePath?: string;
   isRulesBreaker?: boolean;
   assignedUser?: string;
   deadline?: Date;

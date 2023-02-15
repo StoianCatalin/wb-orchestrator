@@ -27,12 +27,17 @@
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
     "dotenv": "^16.0.3",
+    "form-data": "^4.0.0",
     "geckodriver": "^3.2.0",
+    "joi": "^17.7.0",
     "moment": "^2.29.4",
+    "nestjs-joi": "^1.9.0",
+    "playwright": "^1.30.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
-    "selenium-webdriver": "^4.7.1"
+    "selenium-webdriver": "^4.7.1",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
