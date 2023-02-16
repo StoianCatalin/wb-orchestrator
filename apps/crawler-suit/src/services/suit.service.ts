@@ -27,6 +27,9 @@ export class SuitService {
   }
 
   async chooseAndRunCrawler() {
+    if (!this.configService.get('scrapper_name')) {
+      throw new Error("No scrapper name provided. Please set the SCRAPPER_NAME environment variable.");
+    }
     switch (this.configService.get('scrapper_name')) {
       case 'camera_deputatilor':
         return await CDEP_crawler({ timestamp: Date.now() - 1000 * 60 * 60 * 24 });
