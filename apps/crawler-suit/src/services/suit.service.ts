@@ -32,7 +32,7 @@ export class SuitService {
     }
     switch (this.configService.get('scrapper_name')) {
       case 'camera_deputatilor':
-        return await CDEP_crawler({ timestamp: Date.now() - 1000 * 60 * 60 * 24 });
+        return await CDEP_crawler({ timestamp: Date.now() });
       case 'senat':
         return;
       case 'justitie':
@@ -48,6 +48,7 @@ export class SuitService {
     // check if project already exists
     // if not, create it
     // TODO: get project by title
+    console.log(result);
     for (const project of result[this.configService.get('scrapper_name')]) {
 
       let projectExists = await this.apiService.findProjectBy({title: project.lawProject.name});
