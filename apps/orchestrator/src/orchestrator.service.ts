@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {Injectable} from '@nestjs/common';
 import {ApiService} from "@app/common/api/api.service";
 import {AiService} from "./ai/ai.service";
 
 @Injectable()
 export class OrchestratorService {
-  constructor(private aiService: AiService, private apiService: ApiService) {}
+  constructor(private aiService: AiService, private apiService: ApiService) {
+  }
 
   async postDownload(documentId: string) {
     const document = await this.apiService.getDocument(documentId);
@@ -12,8 +13,14 @@ export class OrchestratorService {
   }
 
   async postOcr(documentId: string) {
-    const { data: text } = await this.aiService.getOCRText(documentId);
-    const { data: quality } = await this.aiService.getOCRQuality(documentId);
-    await this.apiService.updateDocument(documentId, { textInterpretationPrecision: quality.ocr_quality_percent });
+    console.log('hereee');
+    const {data: text} = await this.aiService.getOCRText(documentId);
+    console.log(text);
+    const {data: quality} = await this.aiService.getOCRQuality(documentId);
+    console.log(quality);
+    await this.apiService.updateDocument(documentId, {
+      textInterpretationPrecision: quality.ocr_quality_percent,
+      postOcrContent: text
+    });
   }
 }

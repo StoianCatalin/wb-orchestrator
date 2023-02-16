@@ -17,7 +17,7 @@ export class AiService {
 
   startOCRProcess(document: IDocumentOutgoingDTO) {
     const form_data = new FormData();
-    const file = fs.readFileSync(path.join(__dirname, `../../..${document.storagePath}`));
+    const file = fs.readFileSync(document.storagePath);
     form_data.append('file', file, { filename: `${document.id}.pdf`, contentType: 'application/pdf' });
 
 
@@ -30,6 +30,7 @@ export class AiService {
   }
 
   getOCRText(documentId: string) {
+    console.log(`${this.baseUrl}/ocr/${documentId}/text`);
     return firstValueFrom(this.httpService.get(`${this.baseUrl}/ocr/${documentId}/text`));
   }
 

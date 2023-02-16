@@ -7,7 +7,7 @@ let context
 /** @var Page */
 let page
 
-const defaultTimeout = 4 * 60 * 1000
+export const defaultTimeout = 4 * 60 * 1000
 
 export const setup = async ({ headless = true, timeout = defaultTimeout } = {}) => {
   browser = await chromium.launch({
@@ -16,7 +16,10 @@ export const setup = async ({ headless = true, timeout = defaultTimeout } = {}) 
   })
   context = await browser.newContext()
   page = await context.newPage()
-  return page
+  return {
+    context,
+    page
+  }
 }
 
 export const teardown = async (waitForMs = 0) => {
@@ -30,3 +33,4 @@ export const getDate = (timestamp = Date.now()) => {
   const dateParts = date.toISOString().split('T')[0].split('-')
   return `${dateParts[0]}${dateParts[1]}${dateParts[2]}`
 }
+

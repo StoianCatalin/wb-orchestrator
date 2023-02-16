@@ -1,13 +1,18 @@
-import { getDate, setup, teardown } from '../helpers';
+import { getDate, setup, teardown, defaultTimeout } from '../helpers';
 
 export const CDEP_crawler = async ({
-                      timestamp = Date.now()
-                    }) => {
+                                     headless = true,
+                                     timeout = defaultTimeout,
+                                     timestamp = Date.now()
+                                   }) => {
   const timerName = 'CDEP took'
   console.log('Starting CDEP script...')
   console.time(timerName)
-  let pdfsCount = 0
-  const page = await setup()
+  let pdfCount = 0
+  const { page } = await setup({
+    headless,
+    timeout
+  })
   const output = {
     camera_deputatilor: []
   }
@@ -65,15 +70,16 @@ export const CDEP_crawler = async ({
               link: pdfPath.startsWith(baseUrl) ? pdfPath : `${baseUrl}${pdfPath}`,
               name: (await row.locator('> td:nth-child(2)').textContent()).trim()
             })
-            pdfsCount += 1
+            pdfCount += 1
           }
         }
+        console.log(`Found ${frameOutput.lawProject.pdf.length} PDFs for ${frameOutput.lawProject.name}`)
         output.camera_deputatilor.push(frameOutput)
       }
     }
   }
   await teardown()
   console.timeEnd(timerName)
-  console.info(`Found ${pdfsCount} PDFs. Exiting...`)
+  console.info(`Found ${pdfCount} PDFs. Exiting...`)
   return output
 }
