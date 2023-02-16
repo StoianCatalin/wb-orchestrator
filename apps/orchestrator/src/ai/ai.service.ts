@@ -30,7 +30,6 @@ export class AiService {
   }
 
   getOCRText(documentId: string) {
-    console.log(`${this.baseUrl}/ocr/${documentId}/text`);
     return firstValueFrom(this.httpService.get(`${this.baseUrl}/ocr/${documentId}/text`));
   }
 

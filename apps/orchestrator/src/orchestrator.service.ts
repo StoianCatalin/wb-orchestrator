@@ -13,11 +13,8 @@ export class OrchestratorService {
   }
 
   async postOcr(documentId: string) {
-    console.log('hereee');
     const {data: text} = await this.aiService.getOCRText(documentId);
-    console.log(text);
     const {data: quality} = await this.aiService.getOCRQuality(documentId);
-    console.log(quality);
     await this.apiService.updateDocument(documentId, {
       textInterpretationPrecision: quality.ocr_quality_percent,
       postOcrContent: text

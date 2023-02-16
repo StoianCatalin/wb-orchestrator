@@ -17,7 +17,6 @@ export class OrchestratorController {
   @Post('/post-download')
   async postDownload(@Body() body: PostDownloadBodyDto, @Res() res) {
     try {
-      console.log('post-download', body.documentId);
       await this.orchestratorService.postDownload(body.documentId);
       return res.status(HttpStatus.OK).json({status: 'ok'});
     } catch (e) {
@@ -32,7 +31,6 @@ export class OrchestratorController {
     if (!body.job_id) {
       return res.status(HttpStatus.BAD_REQUEST).json({status: 'error', message: 'Missing job_id'});
     }
-    console.log('ocr_done', body.job_id);
     await this.orchestratorService.postOcr(body.job_id);
     return res.status(HttpStatus.OK).json({status: 'ok'});
   }
