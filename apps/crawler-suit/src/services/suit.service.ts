@@ -27,6 +27,7 @@ export class SuitService {
   }
 
   async chooseAndRunCrawler() {
+    console.log(process.env);
     if (!this.configService.get('scrapper_name')) {
       throw new Error("No scrapper name provided. Please set the SCRAPPER_NAME environment variable.");
     }
@@ -48,7 +49,6 @@ export class SuitService {
     // check if project already exists
     // if not, create it
     // TODO: get project by title
-    console.log(result);
     for (const project of result[this.configService.get('scrapper_name')]) {
 
       let projectExists = await this.apiService.findProjectBy({title: project.lawProject.name});
