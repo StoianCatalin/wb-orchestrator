@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:lts as builder
+FROM node:lts as builder
 
 ARG project
 
@@ -14,7 +14,7 @@ COPY . .
 
 RUN yarn build $project
 
-FROM --platform=linux/amd64 node:lts-slim
+FROM node:lts-slim
 
 ARG project
 
