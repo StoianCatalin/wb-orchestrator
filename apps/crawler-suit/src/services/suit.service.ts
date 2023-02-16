@@ -57,6 +57,7 @@ export class SuitService {
           title: project.lawProject.name,
         });
         await this.updateDocumentsForProject(remoteProject.id, project.lawProject.pdf, [], this.configService.get('scrapper_name'));
+        break;
       } else {
         await this.updateDocumentsForProject(projectExists[0].id, project.lawProject.pdf, projectExists[0].documents, this.configService.get('scrapper_name'));
       }
@@ -91,6 +92,7 @@ export class SuitService {
           } catch (e) {
             console.log('Cannot create document', document.link, e.message);
           }
+          break;
         }
       } catch (e: any) {
         console.log(e);
