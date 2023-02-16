@@ -16,6 +16,9 @@ export class SuitService {
   }
 
   async run() {
+    if (!this.configService.get('scrapper_name')) {
+      throw new Error("No scrapper name provided. Please set the SCRAPPER_NAME environment variable.");
+    }
     try {
       const result = await this.chooseAndRunCrawler();
       await this.postScrapping(result);
@@ -28,9 +31,6 @@ export class SuitService {
 
   async chooseAndRunCrawler() {
     console.log(process.env);
-    if (!this.configService.get('scrapper_name')) {
-      throw new Error("No scrapper name provided. Please set the SCRAPPER_NAME environment variable.");
-    }
     switch (this.configService.get('scrapper_name')) {
       case 'camera_deputatilor':
         return await CDEP_crawler({ timestamp: Date.now() });
