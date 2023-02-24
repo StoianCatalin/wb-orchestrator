@@ -32,7 +32,7 @@ export class SuitService {
   async chooseAndRunCrawler() {
     switch (this.configService.get('scrapper_name')) {
       case 'camera_deputatilor':
-        return await CDEP_crawler({ timestamp: Date.now() - 1000 * 60 * 60 * 24 });
+        return await CDEP_crawler({ timestamp: Date.now() - 1000 * 60 * 60 * 24 * 2 });
       case 'senat':
         return;
       case 'justitie':
@@ -82,13 +82,14 @@ export class SuitService {
               source,
               status: 'nou',
             });
+            console.log('Download document...', document.link);
             await downloadFileAndReturnHash(`${this.configService.get('storage_path')}/${newDocument.id}.pdf`, document.link);
+            console.log('File downloaded', document.link);
             await this.apiService.updateDocument(newDocument.id, {
               storagePath: `${this.configService.get('storage_path')}/${newDocument.id}.pdf`,
-
             })
 
-            await this.orchestratorService.postDownload(newDocument.id);
+            // await this.orchestratorService.postDownload(newDocument.id);
           } catch (e) {
             console.log('Cannot create document', document.link, e.message);
           }

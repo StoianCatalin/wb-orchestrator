@@ -29,11 +29,16 @@ export class AiService {
     }));
   }
 
+  getStatus(documentId: string) {
+    return this.httpService.get(`${this.baseUrl}/ocr/${documentId}/status`).toPromise();
+  }
+
   getOCRText(documentId: string) {
-    return firstValueFrom(this.httpService.get(`${this.baseUrl}/ocr/${documentId}/text`));
+    console.log(`${this.baseUrl}/ocr/${documentId}/text`);
+    return this.httpService.get(`${this.baseUrl}/ocr/${documentId}/text`).toPromise();
   }
 
   getOCRQuality(documentId: string) {
-    return firstValueFrom(this.httpService.get(`${this.baseUrl}/ocr/${documentId}/quality`));
+    return this.httpService.get(`${this.baseUrl}/ocr/${documentId}/quality`).toPromise();
   }
 }
