@@ -17,17 +17,17 @@ export class OrchestratorController {
   }
 
   @Get('/next-document')
-  async getNextDocument(@Res() res, @Query('forceStatus') forceStatus: string) {
+  async getNextDocument(@Res() res) {
     try {
-      const id = uuidv4();
-      if (forceStatus === 'not_found') {
+      const document = await this.orchestratorService.getNextDocument();
+      if (!document) {
         return res.status(HttpStatus.NOT_FOUND).json({status: 'not_found'});
       }
-      this.tempMemory[id] = 'ocr-locked';
+      await this.orchestratorService.lockDocument(document.id);
       return res.status(HttpStatus.OK).json({
-        id,
-        storagePath: `${this.configService.get('storage_path')}/${id}.pdf`,
-        status: 'downloaded',
+        ...document,
+        status: document.processingStatus,
+        storagePath: document.storagePath.replace('/Users/stoiancatalin/Documents/world-bank/storage/', '/opt/storage/')
       });
     } catch (e) {
       console.log(e);
@@ -36,12 +36,16 @@ export class OrchestratorController {
   }
 
   @Get('/document/:id')
-  async getDocumentInfo(@Res() res, @Param('id') id: string, @Query('forceStatus') forceStatus: string) {
+  async getDocumentInfo(@Res() res, @Param('id') id: string) {
     try {
+      const document = await this.orchestratorService.getDocument(id);
+      if (!document) {
+        return res.status(HttpStatus.NOT_FOUND).json({status: 'not_found'});
+      }
       return res.status(HttpStatus.OK).json({
-        id,
-        storagePath: `${this.configService.get('storage_path')}/${id}.pdf`,
-        status: this.tempMemory[id] || 'ocr_in_progress',
+        ...document,
+        status: document.processingStatus,
+        storagePath: document.storagePath.replace('/Users/stoiancatalin/Documents/world-bank/', '/opt/storage/')
       });
     } catch (e) {
       console.log(e);
@@ -54,8 +58,8 @@ export class OrchestratorController {
     if (!body.id) {
       return res.status(HttpStatus.BAD_REQUEST).json({status: 'error', message: 'Missing job_id'});
     }
-    this.tempMemory[body.id] = body.status;
     console.log(body);
+    await this.orchestratorService.updateDocument(body.id, body);
     // await this.orchestratorService.postOcr(body.id);
     return res.status(HttpStatus.OK).json({status: 'ok'});
   }

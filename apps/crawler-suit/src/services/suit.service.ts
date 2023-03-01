@@ -3,7 +3,7 @@ import {delay} from "@app/common/utils/delay";
 import {ConfigService} from "@nestjs/config";
 import {CDEP_crawler} from "../crawlers/cdep";
 import {ApiService} from "@app/common/api/api.service";
-import {IDocumentOutgoingDTO} from "@app/common/interfaces/Document";
+import {IDocumentOutgoingDTO, ProcessingStatus} from "@app/common/interfaces/Document";
 import {downloadFileAndReturnHash} from "../utils/downloadFileAndReturnHash";
 import * as moment from 'moment';
 import {v4} from 'uuid';
@@ -32,7 +32,7 @@ export class SuitService {
   async chooseAndRunCrawler() {
     switch (this.configService.get('scrapper_name')) {
       case 'camera_deputatilor':
-        return await CDEP_crawler({ timestamp: Date.now() - 1000 * 60 * 60 * 24 * 2 });
+        return await CDEP_crawler({ timestamp: Date.now() + 1000 * 60 * 60 * 24 * 6 });
       case 'senat':
         return;
       case 'justitie':
@@ -81,6 +81,7 @@ export class SuitService {
               publicationDate: moment(document.date, 'DD-MM-YYYY').toISOString(),
               source,
               status: 'nou',
+              processingStatus: ProcessingStatus.downloaded,
             });
             console.log('Download document...', document.link);
             await downloadFileAndReturnHash(`${this.configService.get('storage_path')}/${newDocument.id}.pdf`, document.link);
@@ -88,8 +89,6 @@ export class SuitService {
             await this.apiService.updateDocument(newDocument.id, {
               storagePath: `${this.configService.get('storage_path')}/${newDocument.id}.pdf`,
             })
-
-            // await this.orchestratorService.postDownload(newDocument.id);
           } catch (e) {
             console.log('Cannot create document', document.link, e.message);
           }

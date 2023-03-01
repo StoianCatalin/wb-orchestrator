@@ -3,7 +3,7 @@ import {ConfigService} from "@nestjs/config";
 import {HttpService} from "@nestjs/axios";
 import {Project} from "@app/common/interfaces/Project";
 import {firstValueFrom} from "rxjs";
-import {IDocumentIncomingDTO, IDocumentOutgoingDTO, Status} from "@app/common/interfaces/Document";
+import {IDocumentIncomingDTO, IDocumentOutgoingDTO, ProcessingStatus, Status} from "@app/common/interfaces/Document";
 
 @Injectable()
 export class ApiService {
@@ -49,6 +49,28 @@ export class ApiService {
         'authorization': this.configService.get('api_key'),
       }
     }));
+    return result.data;
+  }
+
+  async getDownloadedDocuments() {
+    const result = await firstValueFrom(this.httpService.get(`${this.baseUrl}/document?processingStatus=${ProcessingStatus.downloaded}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'authorization': this.configService.get('api_key'),
+      }
+    }));
+
+    return result.data;
+  }
+
+  async lockDocument(documentId: string) {
+    const result = await firstValueFrom(this.httpService.put(`${this.baseUrl}/document/${documentId}`, { processingStatus: ProcessingStatus["locked"] }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'authorization': this.configService.get('api_key'),
+      }
+    }));
+
     return result.data;
   }
 

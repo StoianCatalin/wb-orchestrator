@@ -4,6 +4,13 @@ export enum Status {
   REVIZUIT = 'revizuit',
 }
 
+export enum ProcessingStatus {
+  downloaded = 'downloaded',
+  'locked' = 'locked',
+  'ocr_in_progress' = 'ocr_in_progress',
+  'ocr_done' = 'ocr_done',
+  'ocr_failed' = 'ocr_failed',
+}
 
 export interface IDocumentIncomingDTO {
   title: string;
@@ -23,6 +30,7 @@ export interface IDocumentIncomingDTO {
   numberOfIdentifiedArticles?: number;
   numberOfIdentifiedTerms?: number;
   attachments?: string[];
+  processingStatus?: ProcessingStatus;
 }
 
 export interface IDocumentOutgoingDTO extends IDocumentIncomingDTO {
