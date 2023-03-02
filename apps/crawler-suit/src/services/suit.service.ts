@@ -32,7 +32,7 @@ export class SuitService {
   async chooseAndRunCrawler() {
     switch (this.configService.get('scrapper_name')) {
       case 'camera_deputatilor':
-        return await CDEP_crawler({ timestamp: Date.now() + 1000 * 60 * 60 * 24 * 6 });
+        return await CDEP_crawler({ timestamp: Date.now() + 1000 * 60 * 60 * 24 * 4 });
       case 'senat':
         return;
       case 'justitie':
@@ -72,7 +72,6 @@ export class SuitService {
         });
         if (!remoteDocument && document.name) {
           try {
-            console.log('Create document', document.link);
             const newDocument = await this.apiService.createDocument({
               identifier: v4(),
               title: document.name,

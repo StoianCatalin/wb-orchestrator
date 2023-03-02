@@ -27,6 +27,7 @@ export class OrchestratorController {
       return res.status(HttpStatus.OK).json({
         ...document,
         status: document.processingStatus,
+        // This replace is a hack to make the path work on the localhost
         storagePath: document.storagePath.replace('/Users/stoiancatalin/Documents/world-bank/storage/', '/opt/storage/')
       });
     } catch (e) {
@@ -45,6 +46,7 @@ export class OrchestratorController {
       return res.status(HttpStatus.OK).json({
         ...document,
         status: document.processingStatus,
+        // This replace is a hack to make the path work on the localhost
         storagePath: document.storagePath.replace('/Users/stoiancatalin/Documents/world-bank/', '/opt/storage/')
       });
     } catch (e) {
