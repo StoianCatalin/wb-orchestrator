@@ -27,6 +27,8 @@ export class OrchestratorService {
 
   async updateDocument(documentId: string, data: any) {
     const payload = {
+      // TODO: add ocrText and quality
+      textInterpretationPrecision: data.ocr_quality || undefined,
       processingStatus: data.status || undefined,
     }
     return this.apiService.updateDocument(documentId, payload);

@@ -60,6 +60,7 @@ export class OrchestratorController {
     if (!body.id) {
       return res.status(HttpStatus.BAD_REQUEST).json({status: 'error', message: 'Missing job_id'});
     }
+    // TODO: take text and quality from body and put it in update document.
     console.log(body);
     await this.orchestratorService.updateDocument(body.id, body);
     // await this.orchestratorService.postOcr(body.id);
