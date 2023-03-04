@@ -27,10 +27,13 @@ export class OrchestratorService {
 
   async updateDocument(documentId: string, data: any) {
     const payload = {
-      // TODO: add ocrText and quality
       textInterpretationPrecision: data.ocr_quality || undefined,
       processingStatus: data.status || undefined,
-    }
+      postOcrContent: data.text,
+      totalParts: data.total_parts,
+      part: data.part,
+    };
+
     return this.apiService.updateDocument(documentId, payload);
   }
 }

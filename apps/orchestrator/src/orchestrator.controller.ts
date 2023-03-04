@@ -28,7 +28,7 @@ export class OrchestratorController {
         ...document,
         status: document.processingStatus,
         // This replace is a hack to make the path work on the localhost
-        storagePath: document.storagePath.replace('/Users/stoiancatalin/Documents/world-bank/storage/', '/opt/storage/')
+        storagePath: document.storagePath.replace(this.configService.get('storage_path'), '/opt/storage/')
       });
     } catch (e) {
       console.log(e);
@@ -47,7 +47,7 @@ export class OrchestratorController {
         ...document,
         status: document.processingStatus,
         // This replace is a hack to make the path work on the localhost
-        storagePath: document.storagePath.replace('/Users/stoiancatalin/Documents/world-bank/', '/opt/storage/')
+        storagePath: document.storagePath.replace(this.configService.get('storage_path'), '/opt/storage/')
       });
     } catch (e) {
       console.log(e);
