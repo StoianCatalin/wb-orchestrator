@@ -19,6 +19,7 @@ export class OrchestratorController {
   @Get('/next-document')
   async getNextDocument(@Res() res) {
     try {
+      console.log('a');
       const document = await this.orchestratorService.getNextDocument();
       if (!document) {
         return res.status(HttpStatus.NOT_FOUND).json({status: 'not_found'});
@@ -55,7 +56,7 @@ export class OrchestratorController {
     }
   }
 
-  @Post('/ocr_updates')
+  @Post('/ocr-updates')
   async postOcr(@Body() body: any, @Res() res) {
     if (!body.id) {
       return res.status(HttpStatus.BAD_REQUEST).json({status: 'error', message: 'Missing job_id'});
