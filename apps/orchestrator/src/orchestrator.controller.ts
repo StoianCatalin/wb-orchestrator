@@ -63,8 +63,13 @@ export class OrchestratorController {
     }
     // TODO: take text and quality from body and put it in update document.
     console.log(body);
-    await this.orchestratorService.updateDocument(body.id, body);
-    // await this.orchestratorService.postOcr(body.id);
-    return res.status(HttpStatus.OK).json({status: 'ok'});
+    try {
+      await this.orchestratorService.updateDocument(body.id, body);
+      // await this.orchestratorService.postOcr(body.id);
+      return res.status(HttpStatus.OK).json({status: 'ok'});
+    } catch (e) {
+      console.log(e);
+      return res.status(HttpStatus.OK).json({status: 'error', message: e.message});
+    }
   }
 }
