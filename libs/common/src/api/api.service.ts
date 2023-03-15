@@ -33,13 +33,17 @@ export class ApiService {
   }
 
   async findProjectBy({ title }): Promise<Project[]> {
-    const result = await firstValueFrom(this.httpService.get(`${this.baseUrl}/project/find?title=${encodeURIComponent(title)}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'authorization': this.configService.get('api_key'),
-      }
-    }));
-    return result.data;
+    try {
+      const result = await firstValueFrom(this.httpService.get(`${this.baseUrl}/project/find?title=${encodeURIComponent(title)}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'authorization': this.configService.get('api_key'),
+        }
+      }));
+      return result.data;
+    } catch (e) {
+      return null;
+    }
   }
 
   async findDocumentBy({ project }): Promise<IDocumentOutgoingDTO[]> {

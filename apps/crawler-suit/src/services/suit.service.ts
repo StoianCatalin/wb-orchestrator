@@ -51,7 +51,7 @@ export class SuitService {
     for (const project of result[this.configService.get('scrapper_name')]) {
 
       let projectExists = await this.apiService.findProjectBy({title: project.lawProject.name});
-      if (!projectExists[0]) {
+      if (!projectExists || !projectExists[0]) {
         console.log('Create project', project.lawProject.name);
         const {data: remoteProject} = await this.apiService.createProject({
           title: project.lawProject.name,
