@@ -76,8 +76,8 @@ export class SuitService {
   }
 
   async updateDocumentsForProject(projectId: string, documents: any[], remoteDocuments: IDocumentOutgoingDTO[], source: string) {
-    console.log(documents);
     for (const document of documents) {
+      console.log(document);
       try {
         const remoteDocument = remoteDocuments.find((doc) => {
           return doc.title === document.title && doc.link === document.link;
