@@ -24,7 +24,7 @@ services:
       args:
         project: crawler-suit
     ports:
-      - 3003:3003
+      - 3004:3003
     environment:
       - SCRAPPER_NAME=cdep
     env_file:
@@ -45,7 +45,7 @@ services:
       args:
         project: crawler-suit
     ports:
-      - 3003:3003
+      - 3005:3003
     environment:
       - SCRAPPER_NAME=mdezvoltarii
     env_file:
@@ -66,7 +66,7 @@ services:
       args:
         project: crawler-suit
     ports:
-      - 3003:3003
+      - 3006:3003
     environment:
       - SCRAPPER_NAME=meducatiei
     env_file:
@@ -87,7 +87,7 @@ services:
       args:
         project: crawler-suit
     ports:
-      - 3003:3003
+      - 3007:3003
     environment:
       - SCRAPPER_NAME=mfinante
     env_file:
@@ -108,7 +108,7 @@ services:
       args:
         project: crawler-suit
     ports:
-      - 3003:3003
+      - 3008:3003
     environment:
       - SCRAPPER_NAME=mmediu
     env_file:
@@ -129,7 +129,7 @@ services:
       args:
         project: crawler-suit
     ports:
-      - 3003:3003
+      - 3009:3003
     environment:
       - SCRAPPER_NAME=mtransport
     env_file:
@@ -150,7 +150,7 @@ services:
       args:
         project: crawler-suit
     ports:
-      - 3003:3003
+      - 3010:3003
     environment:
       - SCRAPPER_NAME=senat
     env_file:
