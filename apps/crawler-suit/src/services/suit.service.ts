@@ -37,7 +37,7 @@ export class SuitService {
 
   async chooseAndRunCrawler() {
     switch (this.configService.get('scrapper_name')) {
-      case 'cdep':
+      case 'camera_deputatilor':
         return await CDEP_crawler({ timestamp: Date.now() });
       case 'senat':
         return await senat_crawler({});
