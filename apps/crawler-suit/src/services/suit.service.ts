@@ -2,6 +2,12 @@ import {Injectable} from '@nestjs/common';
 import {delay} from "@app/common/utils/delay";
 import {ConfigService} from "@nestjs/config";
 import { main as CDEP_crawler } from "../crawlers/cdep";
+import { main as mdezvoltarii_crawler } from "../crawlers/mdezvoltarii";
+import { main as meducatiei_crawler } from "../crawlers/meducatiei";
+import { main as mfinante_crawler } from "../crawlers/mfinante";
+import { main as mmediu_crawler } from "../crawlers/mmediu";
+import { main as mtransport_crawler } from "../crawlers/mtransport";
+import { main as senat_crawler } from "../crawlers/senat";
 import {ApiService} from "@app/common/api/api.service";
 import {IDocumentOutgoingDTO, ProcessingStatus} from "@app/common/interfaces/Document";
 import {downloadFileAndReturnHash} from "../utils/downloadFileAndReturnHash";
@@ -32,13 +38,19 @@ export class SuitService {
   async chooseAndRunCrawler() {
     switch (this.configService.get('scrapper_name')) {
       case 'camera_deputatilor':
-        return await CDEP_crawler({ timestamp: Date.now() - 1000 * 60 * 60 * 24 * 2 });
+        return await CDEP_crawler({ timestamp: Date.now() });
       case 'senat':
-        return;
-      case 'justitie':
-        return;
-      case 'monitorul':
-        return;
+        return await senat_crawler({});
+      case 'mdezvoltarii':
+        return await mdezvoltarii_crawler({});
+      case 'meducatiei':
+        return await meducatiei_crawler({});
+        case 'mfinante':
+        return await mfinante_crawler({});
+      case 'mmediu':
+        return await mmediu_crawler({});
+      case 'mtransport':
+        return await mtransport_crawler({});
       default:
         return;
     }

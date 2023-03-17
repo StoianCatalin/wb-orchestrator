@@ -1,0 +1,170 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: .
+      args:
+        project: orchestrator
+    ports:
+      - 8081:8081
+    env_file:
+      - .env.api
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4096M
+
+  cdep-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3003:3003
+    environment:
+      - SCRAPPER_NAME=cdep
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+
+  mdezvoltarii-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3003:3003
+    environment:
+      - SCRAPPER_NAME=mdezvoltarii
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+
+  meducatiei-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3003:3003
+    environment:
+      - SCRAPPER_NAME=meducatiei
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+
+  mfinante-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3003:3003
+    environment:
+      - SCRAPPER_NAME=mfinante
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+
+  mmediu-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3003:3003
+    environment:
+      - SCRAPPER_NAME=mmediu
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+
+  mtransport-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3003:3003
+    environment:
+      - SCRAPPER_NAME=mtransport
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+
+  senat-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3003:3003
+    environment:
+      - SCRAPPER_NAME=senat
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+
+networks:
+  backend:
+    name: api_default
