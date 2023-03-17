@@ -60,7 +60,6 @@ export class SuitService {
     // check if project already exists
     // if not, create it
     // TODO: get project by title
-    console.log(result);
     for (const project of result[this.configService.get('scrapper_name')]) {
       let projectExists = await this.apiService.findProjectBy({title: project.name});
       if (!projectExists || !projectExists[0]) {
@@ -77,6 +76,7 @@ export class SuitService {
   }
 
   async updateDocumentsForProject(projectId: string, documents: any[], remoteDocuments: IDocumentOutgoingDTO[], source: string) {
+    console.log(documents);
     for (const document of documents) {
       try {
         const remoteDocument = remoteDocuments.find((doc) => {
