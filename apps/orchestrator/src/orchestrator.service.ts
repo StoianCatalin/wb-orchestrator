@@ -1,18 +1,19 @@
-import {Injectable} from '@nestjs/common';
-import {ApiService} from "@app/common/api/api.service";
-import {AiService} from "./ai/ai.service";
-import {ProcessingStatus} from "@app/common/interfaces/Document";
+import { Injectable } from '@nestjs/common';
+import { ApiService } from '@app/common/api/api.service';
+import { AiService } from './ai/ai.service';
+import { ProcessingStatus } from '@app/common/interfaces/Document';
 
 @Injectable()
 export class OrchestratorService {
-  constructor(private aiService: AiService, private apiService: ApiService) {
-  }
+  constructor(private aiService: AiService, private apiService: ApiService) {}
 
   async getNextDocument() {
     const data = await this.apiService.getDownloadedDocuments();
     const documents = data.results;
     if (documents && documents.length > 0) {
-      return documents.find(document => document.processingStatus === ProcessingStatus.downloaded);
+      return documents.find(
+        (document) => document.processingStatus === ProcessingStatus.downloaded,
+      );
     }
     return null;
   }
@@ -32,6 +33,8 @@ export class OrchestratorService {
       postOcrContent: data.analysis?.text,
       totalParts: data.analysis?.total_parts,
       part: data.analysis?.part,
+      highlightFile: data.analysis?.highlight_file,
+      highlightMetadata: data.analysis?.highlight_metadata,
     };
 
     return this.apiService.updateDocument(documentId, payload);
