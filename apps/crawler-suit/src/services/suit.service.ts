@@ -84,6 +84,7 @@ export class SuitService {
         });
         // check if document is pdf, otherwise skip.
         if (document.type !== 'pdf') {
+          console.log('Document type', document.type, 'Skipping...');
           continue;
         }
         if (!remoteDocument && document.title) {
