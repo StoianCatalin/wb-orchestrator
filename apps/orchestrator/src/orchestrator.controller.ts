@@ -19,11 +19,13 @@ export class OrchestratorController {
   @Get('/next-document')
   async getNextDocument(@Res() res) {
     try {
-      console.log('a');
+      console.log('Reading next document...');
       const document = await this.orchestratorService.getNextDocument();
       if (!document) {
+        console.log('No document found...');
         return res.status(HttpStatus.NOT_FOUND).json({status: 'not_found'});
       }
+      console.log('Document found...', document.id);
       await this.orchestratorService.lockDocument(document.id);
       return res.status(HttpStatus.OK).json({
         ...document,
