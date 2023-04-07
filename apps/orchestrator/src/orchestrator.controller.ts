@@ -31,7 +31,7 @@ export class OrchestratorController {
         ...document,
         status: document.processingStatus,
         // This replace is a hack to make the path work on the localhost
-        storagePath: document.storagePath.replace(this.configService.get('storage_path'), '/opt/storage/')
+        storagePath: document.storagePath ? document.storagePath.replace(this.configService.get('storage_path'), '/opt/storage/') : document.storagePath
       });
     } catch (e) {
       console.log(e);
@@ -50,7 +50,7 @@ export class OrchestratorController {
         ...document,
         status: document.processingStatus,
         // This replace is a hack to make the path work on the localhost
-        storagePath: document.storagePath.replace(this.configService.get('storage_path'), '/opt/storage/')
+        storagePath: document.storagePath ? document.storagePath.replace(this.configService.get('storage_path'), '/opt/storage/') : document.storagePath
       });
     } catch (e) {
       console.log(e);
