@@ -77,7 +77,6 @@ export class SuitService {
 
   async updateDocumentsForProject(projectId: string, documents: any[], remoteDocuments: IDocumentOutgoingDTO[], source: string) {
     for (const document of documents) {
-      console.log(document);
       try {
         const remoteDocument = remoteDocuments.find((doc) => {
           return doc.title === document.title && doc.link === document.link;
@@ -97,14 +96,22 @@ export class SuitService {
               publicationDate: moment(document.date, 'DD-MM-YYYY').toISOString(),
               source,
               status: 'nou',
-              processingStatus: ProcessingStatus.downloaded,
+              processingStatus: ProcessingStatus.created,
             });
             console.log('Download document...', document.link);
-            await downloadFileAndReturnHash(`${this.configService.get('storage_path')}/${newDocument.id}.pdf`, document.link);
-            console.log('File downloaded', document.link);
-            await this.apiService.updateDocument(newDocument.id, {
-              storagePath: `${this.configService.get('storage_path')}/${newDocument.id}.pdf`,
-            })
+            try {
+              await downloadFileAndReturnHash(`${this.configService.get('storage_path')}/${newDocument.id}.pdf`, document.link);
+              console.log('File downloaded', document.link);
+              await this.apiService.updateDocument(newDocument.id, {
+                storagePath: `${this.configService.get('storage_path')}/${newDocument.id}.pdf`,
+                processingStatus: ProcessingStatus.downloaded,
+              })
+            } catch (e) {
+              await this.apiService.updateDocument(newDocument.id, {
+                processingStatus: ProcessingStatus.unable_to_download,
+              })
+              console.log('Cannot download document', document.link, e.message);
+            }
           } catch (e) {
             console.log('Cannot create document', document.link, e.message);
           }
