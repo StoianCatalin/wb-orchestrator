@@ -4,6 +4,7 @@ import {PostDownloadBodyDto} from "./dtos/PostDownloadBody.dto";
 import {v4 as uuidv4} from 'uuid';
 import {TrustedSourceGuard} from "./guards/TrustedSource.guard";
 import {ConfigService} from "@nestjs/config";
+import {downloadFileAndReturnHash} from "@app/common/utils/downloadFileAndReturnHash";
 
 @Controller()
 export class OrchestratorController {
@@ -27,6 +28,12 @@ export class OrchestratorController {
       }
       console.log('Document found...', document.id);
       await this.orchestratorService.lockDocument(document.id);
+      if (!document.storagePath) {
+        console.log('Document has no storage path. Downloading...');
+        const downloadPath = await downloadFileAndReturnHash(`${this.configService.get('storage_path')}/${document.id}.pdf`, document.link);
+        console.log('Downloaded to', downloadPath);
+        await this.orchestratorService.updateDocument(document.id, {storagePath: downloadPath});
+      }
       return res.status(HttpStatus.OK).json({
         ...document,
         status: document.processingStatus,
