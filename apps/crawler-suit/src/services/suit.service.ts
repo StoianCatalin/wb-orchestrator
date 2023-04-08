@@ -10,10 +10,10 @@ import { main as mtransport_crawler } from "../crawlers/mtransport";
 import { main as senat_crawler } from "../crawlers/senat";
 import {ApiService} from "@app/common/api/api.service";
 import {IDocumentOutgoingDTO, ProcessingStatus} from "@app/common/interfaces/Document";
-import {downloadFileAndReturnHash} from "../utils/downloadFileAndReturnHash";
 import * as moment from 'moment';
 import {v4} from 'uuid';
 import {OrchestratorService} from "./orchestrator.service";
+import {downloadFileAndReturnHash} from "@app/common/utils/downloadFileAndReturnHash";
 
 @Injectable()
 export class SuitService {
