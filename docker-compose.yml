@@ -12,6 +12,8 @@ services:
       - .env.api
     networks:
       - backend
+    volumes:
+      - '/opt/storage:/opt/storage'
     deploy:
       resources:
         limits:
