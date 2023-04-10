@@ -33,6 +33,7 @@ export class OrchestratorController {
         const downloadPath = await downloadFileAndReturnHash(`${this.configService.get('storage_path')}/${document.id}.pdf`, document.link);
         console.log('Downloaded to', downloadPath);
         await this.orchestratorService.updateDocument(document.id, {storagePath: downloadPath});
+        document.storagePath = `${this.configService.get('storage_path')}/${document.id}.pdf`;
       }
       return res.status(HttpStatus.OK).json({
         ...document,
