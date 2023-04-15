@@ -1,0 +1,4 @@
+export enum RobotStatus {
+  FUNCTIONAL = 'FUNCTIONAL',
+  NOT_FUNCTIONAL = 'NOT_FUNCTIONAL',
+}
