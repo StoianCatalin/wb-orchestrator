@@ -42,13 +42,13 @@ export class SuitService {
       const numberOfDocuments = await this.postScrapping(result);
       await this.apiService.updateRobot(robot.id, {
         status: RobotStatus.FUNCTIONAL,
-        info: `Successfully ran ${this.configService.get('scrapper_name')} scrapper. ${numberOfDocuments} documents were added.`,
+        info: `Robotul a rulat cu success. Un numar de ${numberOfDocuments} au fost gasite.`,
       });
     } catch (e) {
       console.log(e);
       await this.apiService.updateRobot(robot.id, {
         status: RobotStatus.NOT_FUNCTIONAL,
-        info: `Failed to run ${this.configService.get('scrapper_name')} scrapper. Error message: ${e.message}`,
+        info: `Portalul nu este disponibil. Mesaj de eroare: ${e.message}`,
       });
     }
     await delay(this.configService.get('delay_between_runs'));
