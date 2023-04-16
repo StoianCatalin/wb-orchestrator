@@ -30,7 +30,7 @@ export class OrchestratorService {
     console.log('data to be posted', data);
 
     const payload = {
-      textInterpretationPrecision: data.ocr_quality,
+      textInterpretationPrecision: data.analysis?.ocr_quality,
       processingStatus: data.status,
       postOcrContent: data.analysis?.text,
       totalParts: data.analysis?.total_parts,
@@ -39,7 +39,8 @@ export class OrchestratorService {
       highlightMetadata: data.analysis?.highlight_metadata,
       ocrFile: data.analysis?.ocr_file,
       ocrQuality: data.analysis?.ocr_quality,
-      statistics: data.statistics,
+      numberOfPages: data.analysis?.statistics?.num_pages,
+      numberOfIdentifiedTerms: data.analysis?.statistics?.num_kwds,
     };
 
     return this.apiService.updateDocument(documentId, payload);
