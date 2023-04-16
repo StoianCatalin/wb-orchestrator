@@ -27,6 +27,8 @@ export class OrchestratorService {
   }
 
   async updateDocument(documentId: string, data: any) {
+    console.log('data to be posted', data);
+
     const payload = {
       textInterpretationPrecision: data.ocr_quality,
       processingStatus: data.status,
@@ -35,6 +37,9 @@ export class OrchestratorService {
       part: data.analysis?.part,
       highlightFile: data.analysis?.highlight_file,
       highlightMetadata: data.analysis?.highlight_metadata,
+      ocrFile: data.analysis?.ocr_file,
+      ocrQuality: data.analysis?.ocr_quality,
+      statistics: data.statistics,
     };
 
     return this.apiService.updateDocument(documentId, payload);
