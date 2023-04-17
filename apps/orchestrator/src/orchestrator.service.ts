@@ -27,14 +27,18 @@ export class OrchestratorService {
   }
 
   async updateDocument(documentId: string, data: any) {
+
     const payload = {
-      textInterpretationPrecision: data.ocr_quality,
+      textInterpretationPrecision: data.analysis?.ocr_quality,
       processingStatus: data.status,
       postOcrContent: data.analysis?.text,
       totalParts: data.analysis?.total_parts,
       part: data.analysis?.part,
       highlightFile: data.analysis?.highlight_file,
       highlightMetadata: data.analysis?.highlight_metadata,
+      ocrFile: data.analysis?.ocr_file,
+      numberOfPages: data.analysis?.statistics?.num_pages,
+      numberOfIdentifiedTerms: data.analysis?.statistics?.num_kwds,
     };
 
     return this.apiService.updateDocument(documentId, payload);
