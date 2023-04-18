@@ -39,16 +39,18 @@ export class SuitService {
     const robot = await this.checkIfRobotExists();
     try {
       const result = await this.chooseAndRunCrawler();
-      const numberOfDocuments = await this.postScrapping(result);
+      const nameOfLastDocument = await this.postScrapping(result);
       await this.apiService.updateRobot(robot.id, {
         status: RobotStatus.FUNCTIONAL,
-        info: `Robotul a rulat cu success. Un numar de ${numberOfDocuments} au fost gasite.`,
+        info: `Robotul a rulat cu success. Ultimul document descarcat: ${nameOfLastDocument}`,
       });
     } catch (e) {
       console.log(e);
+      const urlRegex = /(https?:\/\/[^\s]+)/;
+      const url = e.message.match(urlRegex)[1];
       await this.apiService.updateRobot(robot.id, {
         status: RobotStatus.NOT_FUNCTIONAL,
-        info: `Portalul nu este disponibil. Mesaj de eroare: ${e.message}`,
+        info: `Portalul nu este disponibil. ${ url ? `Ultimul link incercat: ${url}` : e.message }`,
       });
     }
     await delay(this.configService.get('delay_between_runs'));
@@ -80,25 +82,25 @@ export class SuitService {
     // check if project already exists
     // if not, create it
     // TODO: get project by title
-    let numberOfDocuments = 0;
+    let lastDownloadedDocument = '';
     for (const project of result[this.configService.get('scrapper_name')]) {
-      numberOfDocuments += project.documents.length;
       let projectExists = await this.apiService.findProjectBy({title: project.name});
       if (!projectExists || !projectExists[0]) {
         console.log('Create project', project.name);
         const {data: remoteProject} = await this.apiService.createProject({
           title: project.name,
         });
-        await this.updateDocumentsForProject(remoteProject.id, project.documents, [], this.configService.get('scrapper_name'));
+        lastDownloadedDocument = await this.updateDocumentsForProject(remoteProject.id, project.documents, [], this.configService.get('scrapper_name'));
         break;
       } else {
-        await this.updateDocumentsForProject(projectExists[0].id, project.documents, projectExists[0].documents, this.configService.get('scrapper_name'));
+        lastDownloadedDocument = await this.updateDocumentsForProject(projectExists[0].id, project.documents, projectExists[0].documents, this.configService.get('scrapper_name'));
       }
     }
-    return numberOfDocuments;
+    return lastDownloadedDocument;
   }
 
   async updateDocumentsForProject(projectId: string, documents: any[], remoteDocuments: IDocumentOutgoingDTO[], source: string) {
+    let lastDownloadedDocument = '';
     for (const document of documents) {
       try {
         const remoteDocument = remoteDocuments.find((doc) => {
@@ -129,6 +131,7 @@ export class SuitService {
                 storagePath: `${this.configService.get('storage_path')}/${newDocument.id}.pdf`,
                 processingStatus: ProcessingStatus.downloaded,
               })
+              lastDownloadedDocument = document.title;
             } catch (e) {
               await this.apiService.updateDocument(newDocument.id, {
                 processingStatus: ProcessingStatus.unable_to_download,
@@ -144,6 +147,7 @@ export class SuitService {
         console.log(e);
       }
     }
+    return lastDownloadedDocument;
   }
 
 }
