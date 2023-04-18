@@ -14,25 +14,45 @@ import * as moment from 'moment';
 import {v4} from 'uuid';
 import {OrchestratorService} from "./orchestrator.service";
 import {downloadFileAndReturnHash} from "@app/common/utils/downloadFileAndReturnHash";
+import {RobotStatus} from "@app/common/interfaces/Robot";
+
 
 @Injectable()
 export class SuitService {
-  constructor(private configService: ConfigService, private apiService: ApiService, private orchestratorService: OrchestratorService) {
-    this.run();
+  constructor(private configService: ConfigService, private apiService: ApiService, private orchestratorService: OrchestratorService) {}
+
+  async checkIfRobotExists() {
+    try {
+      console.log("Check if robot exists");
+      const { data } = await this.apiService.getRobot(this.configService.get('scrapper_name'));
+      return data;
+    } catch (e) {
+      const { data } = await this.apiService.createRobot(this.configService.get('scrapper_name'));
+      return data;
+    }
   }
 
   async run() {
     if (!this.configService.get('scrapper_name')) {
       throw new Error("No scrapper name provided. Please set the SCRAPPER_NAME environment variable.");
     }
+    const robot = await this.checkIfRobotExists();
     try {
       const result = await this.chooseAndRunCrawler();
-      await this.postScrapping(result);
+      const numberOfDocuments = await this.postScrapping(result);
+      await this.apiService.updateRobot(robot.id, {
+        status: RobotStatus.FUNCTIONAL,
+        info: `Robotul a rulat cu success. Un numar de ${numberOfDocuments} au fost gasite.`,
+      });
     } catch (e) {
       console.log(e);
+      await this.apiService.updateRobot(robot.id, {
+        status: RobotStatus.NOT_FUNCTIONAL,
+        info: `Portalul nu este disponibil. Mesaj de eroare: ${e.message}`,
+      });
     }
     await delay(this.configService.get('delay_between_runs'));
-    this.run();
+    await this.run();
   }
 
   async chooseAndRunCrawler() {
@@ -60,7 +80,9 @@ export class SuitService {
     // check if project already exists
     // if not, create it
     // TODO: get project by title
+    let numberOfDocuments = 0;
     for (const project of result[this.configService.get('scrapper_name')]) {
+      numberOfDocuments += project.documents.length;
       let projectExists = await this.apiService.findProjectBy({title: project.name});
       if (!projectExists || !projectExists[0]) {
         console.log('Create project', project.name);
@@ -73,6 +95,7 @@ export class SuitService {
         await this.updateDocumentsForProject(projectExists[0].id, project.documents, projectExists[0].documents, this.configService.get('scrapper_name'));
       }
     }
+    return numberOfDocuments;
   }
 
   async updateDocumentsForProject(projectId: string, documents: any[], remoteDocuments: IDocumentOutgoingDTO[], source: string) {

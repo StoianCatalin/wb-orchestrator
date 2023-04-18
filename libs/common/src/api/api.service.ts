@@ -20,6 +20,26 @@ export class ApiService {
     };
   }
 
+  getRobot(name: string) {
+    return firstValueFrom(this.httpService.get(`${this.baseUrl}/robot/${name}`, {
+      headers: this.headers,
+    }));
+  }
+
+  createRobot(name: string) {
+    return firstValueFrom(this.httpService.post(`${this.baseUrl}/robot`, {
+      name,
+    }, {
+      headers: this.headers,
+    }));
+  }
+
+  updateRobot(id: string, data: any) {
+    return firstValueFrom(this.httpService.put(`${this.baseUrl}/robot/${id}`, data, {
+      headers: this.headers,
+    }));
+  }
+
   createProject(project: Project) {
     return firstValueFrom(this.httpService.post(`${this.baseUrl}/project`, project, {
       headers: this.headers,
