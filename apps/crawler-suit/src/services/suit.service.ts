@@ -13,6 +13,7 @@ import {main as mjustitiei_crawler} from "../crawlers/mjustitie";
 import {main as mai_crawler} from "../crawlers/mai";
 import {main as mapn_crawler} from "../crawlers/mapn";
 import {main as cdeppl_crawler} from "../crawlers/cdep-pl";
+import { main as senatpl_crawler } from '../crawlers/senat-pl';
 import {ApiService} from "@app/common/api/api.service";
 import {IDocumentOutgoingDTO, ProcessingStatus} from "@app/common/interfaces/Document";
 import * as moment from 'moment';
@@ -46,7 +47,8 @@ export class SuitService {
     const robot = await this.checkIfRobotExists();
     try {
       const result = await this.chooseAndRunCrawler();
-      const nameOfLastDocument = robot_name === 'camera_deputatilor_pl' ? await this.postScrapingCDEP(result) : await this.postScrapping(result);
+      const nameOfLastDocument = robot_name === 'camera_deputatilor_pl' || robot_name === 'senat_pl' ?
+        await this.postScrapingWithFields(result) : await this.postScrapping(result);
       await this.apiService.updateRobot(robot.id, {
         status: RobotStatus.FUNCTIONAL,
         info: nameOfLastDocument ? `Robotul a rulat cu success. Ultimul document descarcat: ${nameOfLastDocument}` : 'Nu sunt fisiere noi de analizat.',
@@ -90,21 +92,25 @@ export class SuitService {
         return await mapn_crawler({});
       case 'camera_deputatilor_pl':
         return await cdeppl_crawler({});
+      case 'senat_pl':
+        return await senatpl_crawler({});
       default:
         return;
     }
   }
 
-  async postScrapingCDEP(results) {
+  async postScrapingWithFields(results) {
+    const robot_name = this.configService.get('scrapper_name');
     let lastDownloadedDocument = '';
-    for (const project of results[this.configService.get('scrapper_name')]) {
+    for (const project of results[robot_name]) {
       let projectExists = await this.apiService.findProjectBy({title: project.name});
       const documents = project.fields.find(field => field.name === 'documents').value;
       if (!projectExists || !projectExists[0]) {
         console.log('Create project', project.name);
-        const fields = await this.getFieldsForCDEPProject(project);
+        const fields = robot_name === 'camera_deputatilor_pl' ? await this.getFieldsForCDEPProject(project) : await this.getFieldsForSenatProject(project);
         const {data: remoteProject} = await this.apiService.createProject({
           ...fields,
+          source: this.configService.get('scrapper_name'),
           title: project.name,
         });
         lastDownloadedDocument = await this.updateDocumentsForProject(remoteProject.id, documents, [], this.configService.get('scrapper_name'));
@@ -112,7 +118,7 @@ export class SuitService {
       } else {
         console.log('Update project', project.name);
         const fields = await this.getFieldsForCDEPProject(project);
-        await this.apiService.updateProject(projectExists[0].id, fields);
+        await this.apiService.updateProject(projectExists[0].id, { ...fields, source: this.configService.get('scrapper_name') });
         lastDownloadedDocument = await this.updateDocumentsForProject(projectExists[0].id, documents, projectExists[0].documents, this.configService.get('scrapper_name'));
       }
     }
@@ -197,30 +203,71 @@ export class SuitService {
       switch (field.name) {
         case 'Nr. înregistrare B.P.I.':
           // fields['numarInregistrareBPI'] = field.value;
-          continue;
+          break;
         case 'Nr. înregistrare Camera Deputatilor':
           fields['numarInregistrareGuvern'] = field.value;
-          continue;
+          break;
         case 'Nr. înregistrare Senat':
           fields['numarInregistrareSenat'] = field.value;
-          continue;
+          break;
         case 'Procedura legislativa':
           fields['proceduraLegislativa'] = field.value;
-          continue;
+          break;
         case 'Camera decizionala':
           fields['cameraDecizionala'] = field.value;
-          continue;
+          break;
         case 'Tip initiativa':
           fields['tipInitiativa'] = field.value;
-          continue;
+          break;
         case 'Procedura de urgenta':
           fields['esteProceduraDeUrgenta'] = field.value === 'da';
-          continue;
+          break;
         case 'Initiator - la data initierii':
           fields['initiator'] = field.value;
-          continue;
+          break;
         default:
-          continue;
+          break;
+      }
+    }
+    return fields;
+  }
+
+  async getFieldsForSenatProject(project) {
+    const fields = {};
+    for (const field of project.fields) {
+      if (field.name === 'documents') {
+        continue;
+      }
+      switch (field.name) {
+        case 'Număr de înregistrare Camera Deputaților':
+          fields['numarInregistrareGuvern'] = field.value || '-';
+          break;
+        case 'Avizul Consiliului Legislativ':
+          fields['numarInregistrareSenat'] = field.value;
+          break;
+        case 'Procedura legislativa':
+          fields['proceduraLegislativa'] = field.value;
+          break;
+        case 'Camera decizionala':
+          fields['cameraDecizionala'] = field.value;
+          break;
+        case 'Tip inițiativă':
+          fields['tipInitiativa'] = field.value;
+          break;
+        case 'Termen adoptare':
+          fields['termenAdoptare'] = field.value;
+          break;
+        case 'Stadiu':
+          fields['stadiu'] = field.value;
+          break;
+        case 'Procedura de urgență':
+          fields['esteProceduraDeUrgenta'] = field.value === 'Da';
+          break;
+        case 'Inițiatori':
+          fields['initiator'] = field.value;
+          break;
+        default:
+          break;
       }
     }
     return fields;

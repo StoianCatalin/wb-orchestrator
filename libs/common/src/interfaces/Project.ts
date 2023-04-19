@@ -13,6 +13,7 @@ export interface Project {
   proceduraLegislativa?: string;
   cameraDecizionala?: string;
   termenAdoptare?: string;
+  source?: string;
   tipInitiativa?: string;
   caracter?: string;
   esteProceduraDeUrgenta?: boolean;
