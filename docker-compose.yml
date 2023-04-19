@@ -146,6 +146,111 @@ services:
           cpus: '2.0'
           memory: 2048M
 
+  cdep-pl-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3009:3003
+    environment:
+      - SCRAPPER_NAME=camera_deputatilor_pl
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+
+  mae-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3009:3003
+    environment:
+      - SCRAPPER_NAME=mae
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+
+  mai-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3009:3003
+    environment:
+      - SCRAPPER_NAME=mai
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+
+  mapn-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3009:3003
+    environment:
+      - SCRAPPER_NAME=camera_deputatilor_pl
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+
+  mjustitie-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3009:3003
+    environment:
+      - SCRAPPER_NAME=mjustitie
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2048M
+
 #  senat-crawler-suit:
 #    build:
 #      context: .
