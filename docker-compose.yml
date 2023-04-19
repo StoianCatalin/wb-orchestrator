@@ -152,7 +152,7 @@ services:
       args:
         project: crawler-suit
     ports:
-      - 3009:3003
+      - 3010:3003
     environment:
       - SCRAPPER_NAME=camera_deputatilor_pl
     env_file:
@@ -173,7 +173,7 @@ services:
       args:
         project: crawler-suit
     ports:
-      - 3009:3003
+      - 3011:3003
     environment:
       - SCRAPPER_NAME=mae
     env_file:
@@ -194,7 +194,7 @@ services:
       args:
         project: crawler-suit
     ports:
-      - 3009:3003
+      - 3012:3003
     environment:
       - SCRAPPER_NAME=mai
     env_file:
@@ -215,7 +215,7 @@ services:
       args:
         project: crawler-suit
     ports:
-      - 3009:3003
+      - 3013:3003
     environment:
       - SCRAPPER_NAME=camera_deputatilor_pl
     env_file:
@@ -236,7 +236,7 @@ services:
       args:
         project: crawler-suit
     ports:
-      - 3010:3003
+      - 3014:3003
     environment:
       - SCRAPPER_NAME=mjustitie
     env_file:
@@ -257,7 +257,7 @@ services:
       args:
         project: crawler-suit
     ports:
-      - 3011:3003
+      - 3015:3003
     environment:
       - SCRAPPER_NAME=senat_pl
     env_file:
