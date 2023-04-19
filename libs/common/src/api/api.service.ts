@@ -46,6 +46,12 @@ export class ApiService {
     }));
   }
 
+  updateProject(id: string, project: Partial<Project>) {
+    return firstValueFrom(this.httpService.put(`${this.baseUrl}/project/${id}`, project, {
+      headers: this.headers,
+    }));
+  }
+
   async getProjects(): Promise<Project[]> {
     const result = await firstValueFrom(this.httpService.get(`${this.baseUrl}/project`, {
       headers: this.headers,

@@ -1,13 +1,19 @@
 import {Injectable} from '@nestjs/common';
 import {delay} from "@app/common/utils/delay";
 import {ConfigService} from "@nestjs/config";
-import { main as CDEP_crawler } from "../crawlers/cdep";
-import { main as mdezvoltarii_crawler } from "../crawlers/mdezvoltarii";
-import { main as meducatiei_crawler } from "../crawlers/meducatiei";
-import { main as mfinante_crawler } from "../crawlers/mfinante";
-import { main as mmediu_crawler } from "../crawlers/mmediu";
-import { main as mtransport_crawler } from "../crawlers/mtransport";
-import { main as senat_crawler } from "../crawlers/senat";
+import {main as CDEP_crawler} from "../crawlers/cdep";
+import {main as mdezvoltarii_crawler} from "../crawlers/mdezvoltarii";
+import {main as meducatiei_crawler} from "../crawlers/meducatiei";
+import {main as mfinante_crawler} from "../crawlers/mfinante";
+import {main as mmediu_crawler} from "../crawlers/mmediu";
+import {main as mtransport_crawler} from "../crawlers/mtransport";
+import {main as senat_crawler} from "../crawlers/senat";
+import {main as mae_crawler} from "../crawlers/mae";
+import {main as mjustitiei_crawler} from "../crawlers/mjustitie";
+import {main as mai_crawler} from "../crawlers/mai";
+import {main as mapn_crawler} from "../crawlers/mapn";
+import {main as cdeppl_crawler} from "../crawlers/cdep-pl";
+import { main as senatpl_crawler } from '../crawlers/senat-pl';
 import {ApiService} from "@app/common/api/api.service";
 import {IDocumentOutgoingDTO, ProcessingStatus} from "@app/common/interfaces/Document";
 import * as moment from 'moment';
@@ -19,30 +25,33 @@ import {RobotStatus} from "@app/common/interfaces/Robot";
 
 @Injectable()
 export class SuitService {
-  constructor(private configService: ConfigService, private apiService: ApiService, private orchestratorService: OrchestratorService) {}
+  constructor(private configService: ConfigService, private apiService: ApiService, private orchestratorService: OrchestratorService) {
+  }
 
   async checkIfRobotExists() {
     try {
       console.log("Check if robot exists");
-      const { data } = await this.apiService.getRobot(this.configService.get('scrapper_name'));
+      const {data} = await this.apiService.getRobot(this.configService.get('scrapper_name'));
       return data;
     } catch (e) {
-      const { data } = await this.apiService.createRobot(this.configService.get('scrapper_name'));
+      const {data} = await this.apiService.createRobot(this.configService.get('scrapper_name'));
       return data;
     }
   }
 
   async run() {
-    if (!this.configService.get('scrapper_name')) {
+    const robot_name = this.configService.get('scrapper_name');
+    if (!robot_name) {
       throw new Error("No scrapper name provided. Please set the SCRAPPER_NAME environment variable.");
     }
     const robot = await this.checkIfRobotExists();
     try {
       const result = await this.chooseAndRunCrawler();
-      const nameOfLastDocument = await this.postScrapping(result);
+      const nameOfLastDocument = robot_name === 'camera_deputatilor_pl' || robot_name === 'senat_pl' ?
+        await this.postScrapingWithFields(result) : await this.postScrapping(result);
       await this.apiService.updateRobot(robot.id, {
         status: RobotStatus.FUNCTIONAL,
-        info: `Robotul a rulat cu success. Ultimul document descarcat: ${nameOfLastDocument}`,
+        info: nameOfLastDocument ? `Robotul a rulat cu success. Ultimul document descarcat: ${nameOfLastDocument}` : 'Nu sunt fisiere noi de analizat.',
       });
     } catch (e) {
       console.log(e);
@@ -50,7 +59,7 @@ export class SuitService {
       const url = e.message.match(urlRegex)[1];
       await this.apiService.updateRobot(robot.id, {
         status: RobotStatus.NOT_FUNCTIONAL,
-        info: `Portalul nu este disponibil. ${ url ? `Ultimul link incercat: ${url}` : e.message }`,
+        info: `Portalul nu este disponibil. ${url ? `Ultimul link incercat: ${url}` : e.message}`,
       });
     }
     await delay(this.configService.get('delay_between_runs'));
@@ -60,28 +69,63 @@ export class SuitService {
   async chooseAndRunCrawler() {
     switch (this.configService.get('scrapper_name')) {
       case 'camera_deputatilor':
-        return await CDEP_crawler({ timestamp: Date.now() });
+        return await CDEP_crawler({timestamp: Date.now()});
       case 'senat':
         return await senat_crawler({});
       case 'mdezvoltarii':
         return await mdezvoltarii_crawler({});
       case 'meducatiei':
         return await meducatiei_crawler({});
-        case 'mfinante':
+      case 'mfinante':
         return await mfinante_crawler({});
       case 'mmediu':
         return await mmediu_crawler({});
       case 'mtransport':
         return await mtransport_crawler({});
+      case 'mae':
+        return await mae_crawler({});
+      case 'mjustitie':
+        return await mjustitiei_crawler({});
+      case 'mai':
+        return await mai_crawler({});
+      case 'mapn':
+        return await mapn_crawler({});
+      case 'camera_deputatilor_pl':
+        return await cdeppl_crawler({});
+      case 'senat_pl':
+        return await senatpl_crawler({});
       default:
         return;
     }
   }
 
+  async postScrapingWithFields(results) {
+    const robot_name = this.configService.get('scrapper_name');
+    let lastDownloadedDocument = '';
+    for (const project of results[robot_name]) {
+      let projectExists = await this.apiService.findProjectBy({title: project.name});
+      const documents = project.fields.find(field => field.name === 'documents').value;
+      if (!projectExists || !projectExists[0]) {
+        console.log('Create project', project.name);
+        const fields = robot_name === 'camera_deputatilor_pl' ? await this.getFieldsForCDEPProject(project) : await this.getFieldsForSenatProject(project);
+        const {data: remoteProject} = await this.apiService.createProject({
+          ...fields,
+          source: this.configService.get('scrapper_name'),
+          title: project.name,
+        });
+        lastDownloadedDocument = await this.updateDocumentsForProject(remoteProject.id, documents, [], this.configService.get('scrapper_name'));
+        break;
+      } else {
+        console.log('Update project', project.name);
+        const fields = await this.getFieldsForCDEPProject(project);
+        await this.apiService.updateProject(projectExists[0].id, { ...fields, source: this.configService.get('scrapper_name') });
+        lastDownloadedDocument = await this.updateDocumentsForProject(projectExists[0].id, documents, projectExists[0].documents, this.configService.get('scrapper_name'));
+      }
+    }
+    return lastDownloadedDocument;
+  }
+
   async postScrapping(result) {
-    // check if project already exists
-    // if not, create it
-    // TODO: get project by title
     let lastDownloadedDocument = '';
     for (const project of result[this.configService.get('scrapper_name')]) {
       let projectExists = await this.apiService.findProjectBy({title: project.name});
@@ -118,7 +162,7 @@ export class SuitService {
               title: document.title,
               project: projectId,
               link: document.link,
-              publicationDate: moment(document.date, 'DD-MM-YYYY').toISOString(),
+              publicationDate: document.date ? moment(document.date, 'DD-MM-YYYY').toISOString() : moment().toISOString(),
               source,
               status: 'nou',
               processingStatus: ProcessingStatus.created,
@@ -148,6 +192,85 @@ export class SuitService {
       }
     }
     return lastDownloadedDocument;
+  }
+
+  async getFieldsForCDEPProject(project) {
+    const fields = {};
+    for (const field of project.fields) {
+      if (field.name === 'documents') {
+        continue;
+      }
+      switch (field.name) {
+        case 'Nr. înregistrare B.P.I.':
+          // fields['numarInregistrareBPI'] = field.value;
+          break;
+        case 'Nr. înregistrare Camera Deputatilor':
+          fields['numarInregistrareGuvern'] = field.value;
+          break;
+        case 'Nr. înregistrare Senat':
+          fields['numarInregistrareSenat'] = field.value;
+          break;
+        case 'Procedura legislativa':
+          fields['proceduraLegislativa'] = field.value;
+          break;
+        case 'Camera decizionala':
+          fields['cameraDecizionala'] = field.value;
+          break;
+        case 'Tip initiativa':
+          fields['tipInitiativa'] = field.value;
+          break;
+        case 'Procedura de urgenta':
+          fields['esteProceduraDeUrgenta'] = field.value === 'da';
+          break;
+        case 'Initiator - la data initierii':
+          fields['initiator'] = field.value;
+          break;
+        default:
+          break;
+      }
+    }
+    return fields;
+  }
+
+  async getFieldsForSenatProject(project) {
+    const fields = {};
+    for (const field of project.fields) {
+      if (field.name === 'documents') {
+        continue;
+      }
+      switch (field.name) {
+        case 'Număr de înregistrare Camera Deputaților':
+          fields['numarInregistrareGuvern'] = field.value || '-';
+          break;
+        case 'Avizul Consiliului Legislativ':
+          fields['numarInregistrareSenat'] = field.value;
+          break;
+        case 'Procedura legislativa':
+          fields['proceduraLegislativa'] = field.value;
+          break;
+        case 'Camera decizionala':
+          fields['cameraDecizionala'] = field.value;
+          break;
+        case 'Tip inițiativă':
+          fields['tipInitiativa'] = field.value;
+          break;
+        case 'Termen adoptare':
+          fields['termenAdoptare'] = field.value;
+          break;
+        case 'Stadiu':
+          fields['stadiu'] = field.value;
+          break;
+        case 'Procedura de urgență':
+          fields['esteProceduraDeUrgenta'] = field.value === 'Da';
+          break;
+        case 'Inițiatori':
+          fields['initiator'] = field.value;
+          break;
+        default:
+          break;
+      }
+    }
+    return fields;
   }
 
 }
