@@ -9,11 +9,16 @@ export class OrchestratorService {
 
   async getNextDocument() {
     const data = await this.apiService.getDownloadedDocuments();
-    const documents = data.results;
+    const { results: documents, keywords, keywordsHash } = data;
     if (documents && documents.length > 0) {
-      return documents.find(
-        (document) => document.processingStatus === ProcessingStatus.downloaded,
-      );
+      return {
+        document: documents.find(
+          (document) =>
+            document.processingStatus === ProcessingStatus.downloaded,
+        ),
+        keywords,
+        keywordsHash,
+      };
     }
     return null;
   }
@@ -27,7 +32,6 @@ export class OrchestratorService {
   }
 
   async updateDocument(documentId: string, data: any) {
-
     const payload = {
       textInterpretationPrecision: data.analysis?.ocr_quality,
       processingStatus: data.status,
