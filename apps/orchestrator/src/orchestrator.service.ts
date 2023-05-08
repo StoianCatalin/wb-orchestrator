@@ -9,10 +9,15 @@ export class OrchestratorService {
 
   async getNextDocument() {
     const data = await this.apiService.getDownloadedDocuments();
-    const { results: documents, keywords, keywordsHash } = data;
-    if (documents && documents.length > 0) {
+    const {
+      documents: { results },
+      keywords,
+      keywordsHash,
+    } = data;
+    console.log(results);
+    if (results && results.length > 0) {
       return {
-        document: documents.find(
+        document: results.find(
           (document) =>
             document.processingStatus === ProcessingStatus.downloaded,
         ),
