@@ -14,7 +14,6 @@ export class OrchestratorService {
       keywords,
       keywordsHash,
     } = data;
-    console.log(results);
     if (results && results.length > 0) {
       return {
         document: results.find(
