@@ -9,19 +9,15 @@ export class OrchestratorService {
 
   async getNextDocument() {
     const data = await this.apiService.getDownloadedDocuments();
-    const {
-      documents: { results },
-      keywords,
-      keywordsHash,
-    } = data;
-    if (results && results.length > 0) {
+    const documents = data.documents?.results;
+    if (documents && documents.length > 0) {
       return {
-        document: results.find(
+        document: documents.find(
           (document) =>
             document.processingStatus === ProcessingStatus.downloaded,
         ),
-        keywords,
-        keywordsHash,
+        keywords: data.keywords,
+        keywordsHash: data.keywordsHash,
       };
     }
     return null;
