@@ -34,12 +34,12 @@ export class OrchestratorController {
   async getNextDocument(@Res() res) {
     try {
       console.log('Reading next document...');
-      const { document, keywordsHash, keywords } =
-        await this.orchestratorService.getNextDocument();
-      if (!document) {
+      const result = await this.orchestratorService.getNextDocument();
+      if (!result) {
         console.log('No document found...');
         return res.status(HttpStatus.NOT_FOUND).json({ status: 'not_found' });
       }
+      const { document, keywordsHash, keywords } = result;
       console.log('Document found...', document.id);
       await this.orchestratorService.lockDocument(document.id);
       if (!document.storagePath) {
