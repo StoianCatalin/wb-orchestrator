@@ -205,7 +205,7 @@ export class SuitService {
           // fields['numarInregistrareBPI'] = field.value;
           break;
         case 'Nr. înregistrare Camera Deputatilor':
-          fields['numarInregistrareGuvern'] = field.value;
+          fields['numarInregistrareCDep'] = field.value;
           break;
         case 'Nr. înregistrare Senat':
           fields['numarInregistrareSenat'] = field.value;
@@ -240,7 +240,7 @@ export class SuitService {
       }
       switch (field.name) {
         case 'Număr de înregistrare Camera Deputaților':
-          fields['numarInregistrareGuvern'] = field.value || '-';
+          fields['numarInregistrareCDep'] = field.value || '-';
           break;
         case 'Avizul Consiliului Legislativ':
           fields['numarInregistrareSenat'] = field.value;
