@@ -21,6 +21,8 @@ import {v4} from 'uuid';
 import {OrchestratorService} from "./orchestrator.service";
 import {downloadFileAndReturnHash} from "@app/common/utils/downloadFileAndReturnHash";
 import {RobotStatus} from "@app/common/interfaces/Robot";
+import getCrawlerId from "../utils/get_crawler_id";
+import getDocumentId from "../utils/getDocumentId";
 
 
 @Injectable()
@@ -158,7 +160,7 @@ export class SuitService {
         if (!remoteDocument && document.title) {
           try {
             const newDocument = await this.apiService.createDocument({
-              identifier: v4(),
+              identifier: `${getCrawlerId(source)}${getDocumentId()}`,
               title: document.title,
               project: projectId,
               link: document.link,
