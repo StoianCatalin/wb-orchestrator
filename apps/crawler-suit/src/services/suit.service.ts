@@ -114,6 +114,8 @@ export class SuitService {
           ...fields,
           source: this.configService.get('scrapper_name'),
           title: project.name,
+          publicationDate: project.date || moment().format('DD-MM-YYYY'),
+          url: project.currentUrl,
         });
         lastDownloadedDocument = await this.updateDocumentsForProject(remoteProject.id, documents, [], this.configService.get('scrapper_name'));
         break;
