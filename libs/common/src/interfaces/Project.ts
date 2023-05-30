@@ -7,6 +7,8 @@ export interface Project {
   presentsInterest?: boolean;
 
   documents?: IDocumentOutgoingDTO[];
+  publicationDate?: string;
+  url?: string;
 
   numarInregistrareSenat?: string;
   numarInregistrareGuvern?: string;
