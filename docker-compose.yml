@@ -272,6 +272,182 @@ services:
           cpus: '2.0'
           memory: 2048M
 
+  magriculturii-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3016:3003
+    environment:
+      - SCRAPPER_NAME=magriculturii
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+
+  mcercetarii-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3017:3003
+    environment:
+      - SCRAPPER_NAME=mcercetarii
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+
+  mculturii-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3018:3003
+    environment:
+      - SCRAPPER_NAME=mculturii
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+
+  meconomiei-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3019:3003
+    environment:
+      - SCRAPPER_NAME=meconomiei
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+
+  menergiei-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3020:3003
+    environment:
+      - SCRAPPER_NAME=menergiei
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+
+  mfamiliei-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3021:3003
+    environment:
+      - SCRAPPER_NAME=mfamiliei
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+
+  minvestitiilor-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3022:3003
+    environment:
+      - SCRAPPER_NAME=minvestitiilor
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+
+  mmuncii-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3023:3003
+    environment:
+      - SCRAPPER_NAME=mmuncii
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+
+  msanatatii-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3024:3003
+    environment:
+      - SCRAPPER_NAME=msanatatii
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+
+  msport-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3025:3003
+    environment:
+      - SCRAPPER_NAME=msport
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+
+  mturism-crawler-suit:
+    build:
+      context: .
+      args:
+        project: crawler-suit
+    ports:
+      - 3026:3003
+    environment:
+      - SCRAPPER_NAME=mturism
+    env_file:
+      - .env.crawler
+    volumes:
+      - '/opt/storage:/opt/storage'
+    networks:
+      - backend
+
 #  senat-crawler-suit:
 #    build:
 #      context: .
