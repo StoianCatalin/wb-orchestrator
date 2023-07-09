@@ -7,9 +7,9 @@ let context
 /** @type {import('playwright').Page} */
 let page
 
-export const defaultTimeout = 4 * 60 * 1000
+const defaultTimeout = 4 * 60 * 1000
 
-export const setup = async ({
+const setup = async ({
                        headless = true,
                        timeout = defaultTimeout
                      } = {}) => {
@@ -25,19 +25,19 @@ export const setup = async ({
   }
 }
 
-export const teardown = async (waitForMs = 0) => {
+const teardown = async (waitForMs = 0) => {
   await page.waitForTimeout(waitForMs)
   await context.close()
   await browser.close()
 }
 
-export const getDate = (timestamp = Date.now()) => {
+const getDate = (timestamp = Date.now()) => {
   const date = new Date(timestamp)
   const dateParts = date.toISOString().split('T')[0].split('-')
   return `${dateParts[0]}${dateParts[1]}${dateParts[2]}`
 }
 
-export const getMonthFromROString = (month) => {
+const getMonthFromROString = (month) => {
   switch (month.toLowerCase()) {
     case 'ianuarie':
     case 'ian':
@@ -78,10 +78,19 @@ export const getMonthFromROString = (month) => {
       return '00'
   }
 }
-export const knownDocumentTypes = ['pdf', 'doc', 'docx', 'odt', 'odm', 'xls', 'xlsx', 'ods', 'rar', 'zip']
-export const getDocumentType = (url) => {
+const knownDocumentTypes = ['pdf', 'doc', 'docx', 'odt', 'odm', 'xls', 'xlsx', 'ods', 'rar', 'zip']
+const getDocumentType = (url) => {
   const urlParts = url.split('.')
   switch (urlParts[urlParts.length - 1].toLowerCase()) {
+    case 'png':
+    case 'jpg':
+    case 'jpeg':
+    case 'gif':
+    case 'svg':
+    case 'bmp':
+    case 'tif':
+    case 'tiff':
+      return 'image'
     case 'pdf':
       return 'pdf'
     case 'doc':
@@ -97,12 +106,14 @@ export const getDocumentType = (url) => {
     case 'rar':
     case 'zip':
       return 'archive'
+    case 'vsd':
+      return 'visio'
     default:
       return 'unknown'
   }
 }
 
-export const outputReport = (outputArray, docCounter, documentCounter, pageCounter) => {
+const outputReport = (outputArray, docCounter, documentCounter, pageCounter) => {
   if (outputArray.length !== 0) {
     console.info(`Parsed ${pageCounter} pages and found ${documentCounter} items out of which`)
     const docTypesCount = Object.keys(docCounter).length
@@ -117,4 +128,15 @@ export const outputReport = (outputArray, docCounter, documentCounter, pageCount
     console.info('Found no items. Something must have gone wrong. 😔')
   }
 
+}
+
+export {
+  defaultTimeout,
+  getDate,
+  getDocumentType,
+  getMonthFromROString,
+  knownDocumentTypes,
+  outputReport,
+  setup,
+  teardown
 }

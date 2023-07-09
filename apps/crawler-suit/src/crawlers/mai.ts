@@ -78,7 +78,7 @@ export const main = async ({
 
   await teardown()
   console.timeEnd(timerName)
-  outputReport(output, docCounter, documentCounter, 1)
+  outputReport(output.mai, docCounter, documentCounter, 1)
 
   return output
 }
