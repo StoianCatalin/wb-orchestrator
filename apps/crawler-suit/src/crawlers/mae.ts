@@ -6,6 +6,7 @@ import {
   teardown,
   getMonthFromROString
 } from '../helpers';
+
 const pageUrls = [
   'https://www.mae.ro/node/2011'
 ]
@@ -118,6 +119,10 @@ export const main = async ({
 
   await teardown()
   console.timeEnd(timerName)
-  outputReport(output, docCounter, documentCounter, pageCounter)
+  outputReport(output.mae, docCounter, documentCounter, pageCounter)
   return output
+}
+
+module.exports = {
+  main
 }

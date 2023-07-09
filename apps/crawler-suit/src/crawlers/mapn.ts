@@ -91,6 +91,6 @@ export const main = async ({
 
   await teardown()
   console.timeEnd(timerName)
-  outputReport(output, docCounter, documentCounter, pageCounter)
+  outputReport(output.mapn, docCounter, documentCounter, pageCounter)
   return output
 }

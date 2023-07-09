@@ -14,6 +14,17 @@ import {main as mai_crawler} from "../crawlers/mai";
 import {main as mapn_crawler} from "../crawlers/mapn";
 import {main as cdeppl_crawler} from "../crawlers/cdep-pl";
 import { main as senatpl_crawler } from '../crawlers/senat-pl';
+import { main as magriculturii_crawler } from '../crawlers/magriculturii';
+import { main as mcercetarii_crawler } from '../crawlers/mcercetarii';
+import { main as mculturii_crawler } from '../crawlers/mculturii';
+import { main as meconomiei_crawler } from '../crawlers/meconomiei';
+import { main as menergiei_crawler } from '../crawlers/menergiei';
+import { main as mfamiliei_crawler } from '../crawlers/mfamiliei';
+import { main as minvestitiilor_crawler } from '../crawlers/minvestitiilor';
+import { main as mmuncii_crawler } from '../crawlers/mmuncii';
+import { main as msanatatii_crawler } from '../crawlers/msanatatii';
+import { main as msport_crawler } from '../crawlers/msport';
+import { main as mturism_crawler } from '../crawlers/mturism';
 import {ApiService} from "@app/common/api/api.service";
 import {IDocumentOutgoingDTO, ProcessingStatus} from "@app/common/interfaces/Document";
 import * as moment from 'moment';
@@ -96,6 +107,28 @@ export class SuitService {
         return await cdeppl_crawler({});
       case 'senat_pl':
         return await senatpl_crawler({});
+      case 'magriculturii':
+        return await magriculturii_crawler({});
+      case 'mcercetarii':
+        return await mcercetarii_crawler({});
+      case 'mculturii':
+        return await mculturii_crawler({});
+      case 'meconomiei':
+        return await meconomiei_crawler({});
+      case 'menergiei':
+        return await menergiei_crawler({});
+      case 'mfamiliei':
+        return await mfamiliei_crawler({});
+      case 'minvestitiilor':
+        return await minvestitiilor_crawler({});
+      case 'mmuncii':
+        return await mmuncii_crawler({});
+      case 'msanatatii':
+        return await msanatatii_crawler({});
+      case 'msport':
+        return await msport_crawler({});
+      case 'mturism':
+        return await mturism_crawler({});
       default:
         return;
     }
