@@ -217,7 +217,7 @@ services:
     ports:
       - 3013:3003
     environment:
-      - SCRAPPER_NAME=camera_deputatilor_pl
+      - SCRAPPER_NAME=mapn
     env_file:
       - .env.crawler
     volumes:
