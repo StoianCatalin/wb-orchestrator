@@ -26,7 +26,29 @@ export default function getCrawlerId(crawler_name: string) {
       return 'CD';
     case 'senat_pl':
       return 'S';
+    case 'magriculturii':
+      return 'MADR';
+    case 'mcercetarii':
+      return 'MCI';
+    case 'mculturii':
+      return 'MC';
+    case 'meconomiei':
+      return 'MECOM';
+    case 'menergiei':
+      return 'MENER';
+    case 'mfamiliei':
+      return 'MFAM';
+    case 'minvestitiilor':
+      return 'MINVEST';
+    case 'mmuncii':
+      return 'MMUN';
+    case 'msanatatii':
+      return 'MS';
+    case 'msport':
+      return 'MS';
+    case 'mturism':
+      return 'MTUR';
     default:
-      return;
+      return 'DOC';
   }
 }
