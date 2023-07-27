@@ -142,13 +142,6 @@ export class SuitService {
       if (!projectExists || !projectExists[0]) {
         console.log('Create project', project.name);
         const fields = robot_name === 'camera_deputatilor_pl' ? await this.getFieldsForCDEPProject(project) : await this.getFieldsForSenatProject(project);
-        console.log({
-          ...fields,
-          source: this.configService.get('scrapper_name'),
-          title: project.name,
-          publicationDate: project.date || moment().format('DD-MM-YYYY'),
-          url: project.currentUrl,
-        });
         const {data: remoteProject} = await this.apiService.createProject({
           ...fields,
           source: this.configService.get('scrapper_name'),
@@ -176,6 +169,9 @@ export class SuitService {
         console.log('Create project', project.name);
         const {data: remoteProject} = await this.apiService.createProject({
           title: project.name,
+          source: this.configService.get('scrapper_name'),
+          publicationDate: project.date || moment().format('DD-MM-YYYY'),
+          url: project.currentUrl,
         });
         lastDownloadedDocument = await this.updateDocumentsForProject(remoteProject.id, project.documents, [], this.configService.get('scrapper_name'));
         break;

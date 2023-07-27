@@ -29,7 +29,7 @@ export const main = async ({
   const iframeTriggerPrefix = 'javascript:loadintoIframe('
   const baseUrl = 'https://www.cdep.ro'
 
-  await page.goto(`https://www.cdep.ro/pls/caseta/eCaseta2015.OrdineZi?dat=20230620`)
+  await page.goto(`https://www.cdep.ro/pls/caseta/eCaseta2015.OrdineZi?dat=20230613`)
   console.info(`Navigated to ${page.url()}`)
   console.info('-------------------')
 
