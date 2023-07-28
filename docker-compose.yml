@@ -472,3 +472,5 @@ services:
 networks:
   backend:
     name: api_default
+    external: true
+
