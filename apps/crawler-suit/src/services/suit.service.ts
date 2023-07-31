@@ -197,12 +197,13 @@ export class SuitService {
         }
         if (!remoteDocument && document.title) {
           try {
+            console.log(document.date);
             const newDocument = await this.apiService.createDocument({
               identifier: `${getCrawlerId(source)}${getDocumentId()}`,
               title: document.title,
               project: projectId,
               link: document.link.toString(),
-              publicationDate: document.date ? document.date : moment().format('DD-MM-YYYY'),
+              publicationDate: document.date ? moment(document.date, 'DD-MM-YYYY').toISOString() : moment().toISOString(),
               source,
               status: 'nou',
               processingStatus: ProcessingStatus.created,
