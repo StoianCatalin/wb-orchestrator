@@ -7,9 +7,9 @@ import {
 } from '../helpers';
 
 export const main = async ({
-                      headless = true,
-                      timeout = defaultTimeout,
-                    }) => {
+                             headless = true,
+                             timeout = defaultTimeout,
+                           }) => {
   const timerName = "MFinante took"
   console.info("Starting MFinante script...")
   console.time(timerName)
@@ -68,6 +68,8 @@ export const main = async ({
           const textWithoutLink = (text.includes('href="')
             ? text.replaceAll(/<a.*?>/g, '')
               .replaceAll(/<\/a>/g, '')
+              .replace(/(<([^>]+)>)/gi, '')
+              .replaceAll('&nbsp;', '')
             : text).trim()
 
           if (date && link && textWithoutLink) {

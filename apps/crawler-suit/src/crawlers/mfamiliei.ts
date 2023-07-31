@@ -7,9 +7,9 @@ import {
 } from '../helpers';
 
 export const main = async ({
-                      headless = true,
-                      timeout = defaultTimeout
-                    }) => {
+                             headless = true,
+                             timeout = defaultTimeout
+                           }) => {
   const timerName = 'MFAMILIEI took'
   console.info('Starting MFAMILIEI script...')
   console.time(timerName)
@@ -52,7 +52,7 @@ export const main = async ({
     let articleCounter = 0
 
     const articlesWrapper = page.locator('article.page.type-page')
-    const articleDates = await articlesWrapper.locator('p span[style] b').filter({
+    const articleDates = await articlesWrapper.locator('p b').filter({
       hasText: "Data publicării: "
     }).all()
 

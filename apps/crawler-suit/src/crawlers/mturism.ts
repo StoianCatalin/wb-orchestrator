@@ -7,9 +7,9 @@ import {
 } from '../helpers';
 
 export const main = async ({
-                      headless = true,
-                      timeout = defaultTimeout
-                    }) => {
+                             headless = true,
+                             timeout = defaultTimeout
+                           }) => {
   const timerName = 'MTURISM took'
   console.info('Starting MTURISM script...')
   console.time(timerName)
@@ -96,7 +96,7 @@ export const main = async ({
         const docName = (await docLink.textContent()).trim()
           .replaceAll(`\n`, ' ')
           .replaceAll(`–`, '-')
-          .replaceAll(/\u00a0/, ' ')
+          .replaceAll(/\u00a0/g, ' ')
           .replaceAll(/\2013/g, ' ')
         const docType = getDocumentType(docUrl)
         docs.push({
@@ -105,7 +105,7 @@ export const main = async ({
           title: docName,
           type: docType
         })
-        docCounter[docName] = (docCounter[docName] || 0) + 1
+        docCounter[docType] = (docCounter[docType] || 0) + 1
         documentCounter += 1
       }
 

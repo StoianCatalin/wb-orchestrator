@@ -78,7 +78,9 @@ export const main = async ({
         currentUrl: page.url(),
         date: itemDate,
         name: itemContentParts[0]
-          .replaceAll('&nbsp;', ' '),
+          .replaceAll('&nbsp;', ' ')
+          .replaceAll(`–`, '-')
+          .replace(/(<([^>]+)>)/gi, ''),
         documents: docs
       }
       items.push(item)
