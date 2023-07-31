@@ -202,7 +202,7 @@ export class SuitService {
               title: document.title,
               project: projectId,
               link: document.link.toString(),
-              publicationDate: document.date ? moment(document.date).toISOString() : moment().toISOString(),
+              publicationDate: document.date ? document.date : moment().format('DD-MM-YYYY'),
               source,
               status: 'nou',
               processingStatus: ProcessingStatus.created,

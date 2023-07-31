@@ -59,7 +59,7 @@ export const main = async ({
           const articleName = await articleRow.locator('td').nth(1).textContent()
           const articleDateTimeParts = (await articleRow.locator('td').nth(2).textContent()).split(' ')
           const articleDateParts = articleDateTimeParts[0].split('-')
-          const articleDate = `${articleDateParts[0]}-${articleDateParts[1]}-${articleDateParts[2]}`
+          const articleDate = `${articleDateParts[2]}-${articleDateParts[1]}-${articleDateParts[0]}`
           const articleDownloadLink = articleRow.locator('td').last().locator('a[href][role="link"]')
           const articleDownloadUrl = await articleDownloadLink.getAttribute('href')
           const articleType = getDocumentType(articleDownloadUrl)
