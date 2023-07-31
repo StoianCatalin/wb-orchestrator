@@ -60,7 +60,7 @@ export const main = async ({
       .replace('Data publicarii :', '')
       .trim()
       .split(' ')
-    const date = `${dateParts[0]}-${getMonthFromROString(dateParts[1])}-${dateParts[2]}`
+    const date = `${dateParts[2]}-${getMonthFromROString(dateParts[1])}-${dateParts[0]}`
     const item = {
       currentUrl: page.url(),
       date,
