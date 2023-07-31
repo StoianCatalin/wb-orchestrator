@@ -67,11 +67,12 @@ export class SuitService {
         info: nameOfLastDocument ? `Robotul a rulat cu success. Ultimul document descarcat: ${nameOfLastDocument}` : 'Nu sunt fisiere noi de analizat.',
       });
     } catch (e) {
+      console.log(e);
       const urlRegex = /(https?:\/\/[^\s]+)/;
       const url = e.message.match(urlRegex) && e.message.match(urlRegex).length > 1 && e.message.match(urlRegex)[1];
       await this.apiService.updateRobot(robot.id, {
         status: RobotStatus.NOT_FUNCTIONAL,
-        info: `Portalul nu este disponibil. ${url ? `Ultimul link incercat: ${url}` : e.message}`,
+        info: `Portalul nu este disponibil. ${url ? `Ultimul link incercat: ${url}` : 'Echipa de IT Admin a primit notificare. Incercati descarcare manuala.'}`,
       });
     }
     await delay(this.configService.get('delay_between_runs'));
