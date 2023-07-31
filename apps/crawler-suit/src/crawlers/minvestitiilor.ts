@@ -7,9 +7,9 @@ import {
 } from '../helpers';
 
 export const main = async ({
-                      headless = true,
-                      timeout = defaultTimeout
-                    }) => {
+                             headless = true,
+                             timeout = defaultTimeout
+                           }) => {
   const timerName = 'MINVESTITIILOR took'
   console.info('Starting MINVESTITIILOR script...')
   console.time(timerName)
@@ -79,7 +79,7 @@ export const main = async ({
               documents: [
                 {
                   date: articleDate,
-                  link: articleDownloadLink,
+                  link: articleDownloadUrl,
                   title: (articleName.split(' ') ?? [''])[0] ?? 'Act normativ',
                   type: articleType
                 }

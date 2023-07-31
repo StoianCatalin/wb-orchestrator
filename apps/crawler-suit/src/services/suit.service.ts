@@ -196,6 +196,10 @@ export class SuitService {
           continue;
         }
         if (!remoteDocument && document.title) {
+          let date = document.date ? moment(document.date).toISOString() : moment().toISOString();
+          if (source === 'minvestitiilor') {
+            date = moment(document.date, 'DD-MM-YYYY').toISOString();
+          }
           try {
             const newDocument = await this.apiService.createDocument({
               identifier: `${getCrawlerId(source)}${getDocumentId()}`,
