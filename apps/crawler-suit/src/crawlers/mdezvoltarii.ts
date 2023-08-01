@@ -3,14 +3,15 @@ import {
   getDocumentType,
   outputReport,
   setup,
-  teardown
+  teardown,
+  throwIfNotOk,
 } from '../helpers';
 
 export const main = async ({
-                      headless = true,
-                      maxResults = 200,
-                      timeout = defaultTimeout
-                    }) => {
+                             headless = true,
+                             maxResults = 100,
+                             timeout = defaultTimeout
+                           }) => {
   const timer = Date.now()
   const timerName = 'MDezvoltarii took'
   console.info('Starting MDezvoltarii script...')
@@ -27,7 +28,7 @@ export const main = async ({
   let pageCounter = 0
   const baseUrl = 'https://www.mdlpa.ro/'
 
-  await page.goto('https://www.mdlpa.ro/pages/actenormativecaractergeneral')
+  throwIfNotOk(await page.goto('https://www.mdlpa.ro/pages/actenormativecaractergeneral'))
   const yearlyArchives = [
     'https://www.mdlpa.ro/pages/actenormativecaractergeneral'
   ]
@@ -41,7 +42,7 @@ export const main = async ({
     yearlyArchives.push(`${baseUrl}${archiveUrl}`)
   }
   for await (const archiveUrl of yearlyArchives) {
-    await page.goto(archiveUrl)
+    throwIfNotOk(await page.goto(archiveUrl))
     console.info(`Navigated to ${page.url()} to fetch pages links`)
     console.info('-------------------')
     pageCounter += 1
@@ -74,12 +75,10 @@ export const main = async ({
     }
   }
   console.info(`Found ${output.mdezvoltarii.length} items. Accessing each page to fetch documents links...`)
-  console.info('-------------------');
-  let docPageCopy = null;
+  console.info('-------------------')
   try {
     for await (const docPage of output.mdezvoltarii) {
-      docPageCopy = docPage;
-      await page.goto(docPage.currentUrl)
+      throwIfNotOk(await page.goto(docPage.currentUrl))
       console.info(`Navigated to ${docPage.currentUrl} to fetch documents links`)
       console.info('-------------------')
       pageCounter += 1
@@ -111,7 +110,7 @@ export const main = async ({
       }
     }
   } catch (error) {
-    console.info(`General error while fetching documents links from ${docPageCopy.currentUrl} page...\nGracefully exiting...`)
+    console.info(`General error while fetching documents links from a page...\nGracefully exiting...`)
     console.info('-------------------')
     console.error(error)
   }

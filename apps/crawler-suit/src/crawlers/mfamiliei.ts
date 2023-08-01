@@ -3,7 +3,8 @@ import {
   getDocumentType,
   outputReport,
   setup,
-  teardown
+  teardown,
+  throwIfNotOk,
 } from '../helpers';
 
 export const main = async ({
@@ -34,7 +35,7 @@ export const main = async ({
 
   const rootUrl = 'https://mfamilie.gov.ro/1/proiecte-de-acte-normative-2/'
 
-  await page.goto(rootUrl)
+  throwIfNotOk(await page.goto(rootUrl))
   console.info(`Navigated to ${page.url()} to fetch page count`)
   console.info('-------------------')
   pageCounter += 1
@@ -44,7 +45,7 @@ export const main = async ({
   const lastPageNumber = Number(await page.locator('.page-links a[href].post-page-numbers:last-child').textContent())
 
   for await (const pageNumber of Array.from({ length: lastPageNumber }, (_, i) => i + 1)) {
-    await page.goto(`${rootUrl}page/${pageNumber}/`)
+    throwIfNotOk(await page.goto(`${rootUrl}page/${pageNumber}/`))
     console.info(`Navigated to ${page.url()} to fetch articles, dates & documents`)
     console.info('-------------------')
     pageCounter += 1

@@ -4,14 +4,15 @@ import {
   outputReport,
   setup,
   teardown,
-  getMonthFromROString
+  getMonthFromROString,
+  throwIfNotOk
 } from '../helpers';
 
 const pageUrls = [
   'https://www.mae.ro/node/2011'
 ]
 
-export const main = async ({
+const main = async ({
                       headless = true,
                       timeout = defaultTimeout
                     }) => {
@@ -36,7 +37,7 @@ export const main = async ({
       : route.continue()
   )
   for await (const pageUrl of pageUrls) {
-    await page.goto(pageUrl)
+    throwIfNotOk(await page.goto(pageUrl))
     console.info(`Navigated to ${page.url()} to fetch documents`)
     console.info('-------------------')
     pageCounter += 1

@@ -14,10 +14,14 @@ const setup = async ({
                        timeout = defaultTimeout
                      } = {}) => {
   browser = await chromium.launch({
+    args: ['--ignore-certificate-errors', '--disable-http2'],
     headless,
-    timeout
+    timeout,
   })
-  context = await browser.newContext()
+  context = await browser.newContext({
+    ignoreHTTPSErrors: true,
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188'
+  })
   page = await context.newPage()
   return {
     context,
@@ -29,6 +33,12 @@ const teardown = async (waitForMs = 0) => {
   await page.waitForTimeout(waitForMs)
   await context.close()
   await browser.close()
+}
+
+const throwIfNotOk = (response) => {
+  if (!response.ok()) {
+    throw new Error(`Response from ${response.request().url()} not ok: ${response.status()} ${response.statusText()}`)
+  }
 }
 
 const getDate = (timestamp = Date.now()) => {
@@ -127,7 +137,6 @@ const outputReport = (outputArray, docCounter, documentCounter, pageCounter) => 
   } else {
     console.info('Found no items. Something must have gone wrong. 😔')
   }
-
 }
 
 export {
@@ -138,5 +147,6 @@ export {
   knownDocumentTypes,
   outputReport,
   setup,
-  teardown
+  teardown,
+  throwIfNotOk
 }

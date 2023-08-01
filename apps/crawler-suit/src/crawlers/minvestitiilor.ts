@@ -3,7 +3,8 @@ import {
   getDocumentType,
   outputReport,
   setup,
-  teardown
+  teardown,
+  throwIfNotOk
 } from '../helpers';
 
 export const main = async ({
@@ -45,10 +46,10 @@ export const main = async ({
   for await (const urlToParse of urlsToParse) {
     let articlesTableFound = false
     while (!articlesTableFound) {
-      await page.goto(urlToParse, {
+      throwIfNotOk(await page.goto(urlToParse, {
         timeout: 5 * 1000,
         waitUntil: 'networkidle'
-      })
+      }))
       console.info(`Navigated to ${page.url()} to fetch articles, dates, documents from table rows`)
       console.info('-------------------')
       pageCounter += 1

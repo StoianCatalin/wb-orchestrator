@@ -3,13 +3,14 @@ import {
   getDocumentType,
   outputReport,
   setup,
-  teardown
+  teardown,
+  throwIfNotOk
 } from '../helpers';
 
 export const main = async ({
-                      headless = true,
-                      timeout = defaultTimeout
-                    }) => {
+                             headless = true,
+                             timeout = defaultTimeout
+                           }) => {
   const timerName = 'MMUNCII took'
   console.info('Starting MMUNCII script...')
   console.time(timerName)
@@ -35,7 +36,7 @@ export const main = async ({
   const baseUrl = 'https://mmuncii.ro'
   const rootUrl = 'https://mmuncii.ro/j33/index.php/ro/transparenta/proiecte-in-dezbatere'
 
-  await page.goto(rootUrl)
+  throwIfNotOk(await page.goto(rootUrl))
   console.info(`Navigated to ${page.url()} to fetch articles`)
   console.info('-------------------')
   pageCounter += 1
@@ -47,7 +48,7 @@ export const main = async ({
   }
 
   for await (const articleUrl of articleUrls) {
-    await page.goto(`${baseUrl}${articleUrl}`)
+    throwIfNotOk(await page.goto(`${baseUrl}${articleUrl}`))
     console.info(`Navigated to ${page.url()} to fetch documents`)
     console.info('-------------------')
     pageCounter += 1

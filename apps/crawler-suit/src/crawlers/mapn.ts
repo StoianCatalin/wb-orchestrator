@@ -3,13 +3,14 @@ import {
   getDocumentType,
   outputReport,
   setup,
-  teardown
+  teardown,
+  throwIfNotOk
 } from '../helpers';
 
 export const main = async ({
-                      headless = true,
-                      timeout = defaultTimeout
-                    }) => {
+                             headless = true,
+                             timeout = defaultTimeout
+                           }) => {
   const timerName = 'MAPN took'
   console.info('Starting MAPN script...')
   console.time(timerName)
@@ -30,7 +31,7 @@ export const main = async ({
       : route.continue()
   )
 
-  await page.goto('https://sg.mapn.ro/transparenta')
+  throwIfNotOk(await page.goto('https://sg.mapn.ro/transparenta'))
   console.info(`Navigated to ${page.url()} to change years filter`)
   console.info('-------------------')
   pageCounter += 1

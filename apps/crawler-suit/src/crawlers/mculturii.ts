@@ -4,14 +4,15 @@ import {
   getMonthFromROString,
   outputReport,
   setup,
-  teardown
+  teardown,
+  throwIfNotOk
 } from '../helpers';
 
 export const main = async ({
-                      headless = true,
-                      maxLinksCount = 100,
-                      timeout = defaultTimeout
-                    }) => {
+                             headless = true,
+                             maxLinksCount = 100,
+                             timeout = defaultTimeout
+                           }) => {
   const timerName = 'MCULTURII took'
   console.info('Starting MCULTURII script...')
   console.time(timerName)
@@ -35,7 +36,7 @@ export const main = async ({
 
   const baseUrl = 'http://www.cultura.ro'
   const rootUrl = 'http://www.cultura.ro/proiecte-acte-normative/'
-  await page.goto(rootUrl)
+  throwIfNotOk(await page.goto(rootUrl))
   console.info(`Navigated to ${page.url()} to fetch links`)
   console.info('-------------------')
 
@@ -49,7 +50,7 @@ export const main = async ({
 
   let linkCounter = 0
   for await (const link of links) {
-    await page.goto(`${baseUrl}${link}`)
+    throwIfNotOk(await page.goto(`${baseUrl}${link}`))
     console.info(`Navigated to ${page.url()} to fetch data`)
     console.info('-------------------')
     pageCounter += 1

@@ -3,7 +3,8 @@ import {
   getDocumentType,
   outputReport,
   setup,
-  teardown
+  teardown,
+  throwIfNotOk
 } from '../helpers';
 
 export const main = async ({
@@ -32,7 +33,7 @@ export const main = async ({
 &p_r_p_resetCur=false
 &_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_Bg185RyrkUe4_cur=`
 
-  await page.goto('https://mfinante.gov.ro/ro/acasa/transparenta/proiecte-acte-normative')
+  throwIfNotOk(await page.goto('https://mfinante.gov.ro/ro/acasa/transparenta/proiecte-acte-normative'))
   console.info(`Navigated to ${page.url()} to fetch page count`)
   console.info('-------------------')
   const pageCounter = Number((
@@ -42,7 +43,7 @@ export const main = async ({
 
   const pageIndices = [...Array(pageCounter).keys()].map(i => i + 1)
   for await (const pageIndex of pageIndices) {
-    await page.goto(`${pagePrefix}${pageIndex}`)
+    throwIfNotOk(await page.goto(`${pagePrefix}${pageIndex}`))
     console.info(`Navigated to ${page.url()} to fetch documents\n`)
     console.info('-------------------')
     try {

@@ -3,14 +3,15 @@ import {
   getDocumentType,
   outputReport,
   setup,
-  teardown
+  teardown,
+  throwIfNotOk
 } from '../helpers';
 
 export const main = async ({
-                      headless = true,
-                      maxLinksCount = 50,
-                      timeout = defaultTimeout
-                    }) => {
+                             headless = true,
+                             maxLinksCount = 40,
+                             timeout = defaultTimeout
+                           }) => {
   const timerName = 'MSPORT took'
   console.info('Starting MSPORT script...')
   console.time(timerName)
@@ -33,7 +34,7 @@ export const main = async ({
   )
 
   const rootUrl = 'https://sport.gov.ro/proiecte-legislative-in-dezbatere-publica/'
-  await page.goto(rootUrl)
+  throwIfNotOk(await page.goto(rootUrl))
   console.info(`Navigated to ${page.url()} to fetch links`)
   console.info('-------------------')
   pageCounter += 1
@@ -51,7 +52,7 @@ export const main = async ({
   }
 
   for await (const link of links) {
-    await page.goto(link)
+    throwIfNotOk(await page.goto(link))
     console.info(`Navigated to ${page.url()} to fetch documents`)
     console.info('-------------------')
     pageCounter += 1
@@ -92,7 +93,7 @@ export const main = async ({
       }
     }
     for await (const separateDocLink of separateDocLinks) {
-      await page.goto(separateDocLink)
+      throwIfNotOk(await page.goto(separateDocLink))
       console.info(`Navigated to ${page.url()} to fetch the doc, as it's displayed on a separate attachment page`)
       console.info('-------------------')
       pageCounter += 1

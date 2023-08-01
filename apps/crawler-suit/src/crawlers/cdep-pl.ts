@@ -4,15 +4,17 @@ import {
   getDocumentType,
   outputReport,
   setup,
-  teardown
+  teardown,
+  throwIfNotOk,
 } from '../helpers';
 
 export const main = async ({
-                      headless = true,
-                      timeout = defaultTimeout,
-                    }) => {
-  const timerName = 'CDEP took'
-  console.info('Starting CDEP script...')
+                             headless = true,
+                             timeout = defaultTimeout,
+                             timestamp = Date.now()
+                           }) => {
+  const timerName = 'CDEP-PL took'
+  console.info('Starting CDEP-PL script...')
   console.info('-------------------')
   console.time(timerName)
   let documentCounter = 0
@@ -28,13 +30,16 @@ export const main = async ({
   const today = new Date()
   const formattedToday = `${today.getDate().toString().padStart(2, '0')}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getFullYear()}`
   const baseUrl = 'https://www.cdep.ro'
-  await page.goto(`https://www.cdep.ro/pls/caseta/eCaseta2015.OrdineZi?dat=20230418`)
+  throwIfNotOk(await page.goto(`https://www.cdep.ro/pls/caseta/eCaseta2015.OrdineZi?dat=${timestamp ? getDate(timestamp) : ''}`))
   console.info(`Navigated to ${page.url()} to fetch links`)
   console.info('-------------------')
   pageCounter += 1
   const regNoPrefix = 'Nr. înregistrare:'
   const docsFieldName = 'Consultati:'
-  await page.getByLabel('dismiss cookie message').click()
+  const cookieButton = page.getByLabel('dismiss cookie message')
+  if (await cookieButton.count()) {
+    await cookieButton.click()
+  }
 
   const rows = page.locator('.grup-parlamentar-list.grupuri-parlamentare-list table').locator('tbody tr:not([style])')
   if (!await rows.count()) {
@@ -56,7 +61,7 @@ export const main = async ({
 
   let currentLinkIndex = 0
   for await (const link of links) {
-    await page.goto(`${baseUrl}${link}`)
+    throwIfNotOk(await page.goto(`${baseUrl}${link}`))
     console.info(`Navigated to ${page.url()} to fetch details and documents`)
     console.info('-------------------')
     pageCounter += 1

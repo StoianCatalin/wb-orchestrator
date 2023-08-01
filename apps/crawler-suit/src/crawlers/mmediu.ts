@@ -4,14 +4,15 @@ import {
   getMonthFromROString,
   outputReport,
   setup,
-  teardown
+  teardown,
+  throwIfNotOk
 } from '../helpers';
 
 export const main = async ({
-                      headless = true,
-                      maxPages = 10,
-                      timeout = defaultTimeout
-                    }) => {
+                             headless = true,
+                             maxPages = 5,
+                             timeout = defaultTimeout
+                           }) => {
   const timerName = 'MMediu took'
   console.info('Starting MMediu script...')
   console.time(timerName)
@@ -36,8 +37,8 @@ export const main = async ({
   const rootUrl = 'http://www.mmediu.ro/categories/view/proiecte-de-acte-normative/41/page:'
   const links = []
   for await (const pageNumber of Array(maxPages).keys()) {
-    await page.goto(`${rootUrl}${pageNumber + 1}`)
-    console.info(`Navigated to ${page.url()} to fetch pages`)
+    throwIfNotOk(await page.goto(`${rootUrl}${pageNumber + 1}`))
+    console.info(`Navigated to ${page.url()} to fetch links`)
     console.info('-------------------')
     pageCounter += 1
     for await (const link of await page.locator('article h3.title a').all()) {
@@ -45,7 +46,7 @@ export const main = async ({
     }
   }
   for await (const link of links) {
-    await page.goto(link)
+    throwIfNotOk(await page.goto(link))
     await page.waitForLoadState('networkidle')
     console.info(`Navigated to ${page.url()} to fetch documents`)
     console.info('-------------------')

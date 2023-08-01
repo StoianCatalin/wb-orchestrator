@@ -3,13 +3,14 @@ import {
   getDocumentType,
   outputReport,
   setup,
-  teardown
+  teardown,
+  throwIfNotOk
 } from '../helpers';
 
 export const main = async ({
-                      headless = true,
-                      timeout = defaultTimeout
-                    }) => {
+                             headless = true,
+                             timeout = defaultTimeout
+                           }) => {
   const timerName = 'MAI took'
   console.info('Starting MAI script...')
   console.time(timerName)
@@ -29,7 +30,7 @@ export const main = async ({
       ? route.abort()
       : route.continue()
   )
-  await page.goto('https://www.mai.gov.ro/informatii-publice/transparenta-decizionala/')
+  throwIfNotOk(await page.goto('https://www.mai.gov.ro/informatii-publice/transparenta-decizionala/'))
   console.info(`Navigated to ${page.url()} to fetch documents`)
   console.info('-------------------')
   const linkLocator = 'a[href^="https://webapp.mai.gov.ro"]'

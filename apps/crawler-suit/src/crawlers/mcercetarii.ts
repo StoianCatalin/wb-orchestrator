@@ -3,13 +3,14 @@ import {
   getDocumentType,
   outputReport,
   setup,
-  teardown
+  teardown,
+  throwIfNotOk
 } from '../helpers';
 
 export const main = async ({
-                      headless = true,
-                      timeout = defaultTimeout
-                    }) => {
+                             headless = true,
+                             timeout = defaultTimeout
+                           }) => {
   const timerName = 'MCERCETARII took'
   console.info('Starting MCERCETARII script...')
   console.time(timerName)
@@ -33,7 +34,7 @@ export const main = async ({
 
   const rootUrl = 'https://www.mcid.gov.ro/transparenta-decizionala-2/'
 
-  await page.goto(rootUrl)
+  throwIfNotOk(await page.goto(rootUrl))
   console.info(`Navigated to ${page.url()} to fetch articles, dates & documents`)
   console.info('-------------------')
   pageCounter += 1

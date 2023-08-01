@@ -4,15 +4,16 @@ import {
   outputReport,
   getMonthFromROString,
   setup,
-  teardown
+  teardown,
+  throwIfNotOk
 } from '../helpers';
 
 export const main = async ({
-                      headless = true,
-                      limitPerPage = 50,
-                      maxResults = 100,
-                      timeout = defaultTimeout,
-                    }) => {
+                             headless = true,
+                             limitPerPage = 30,
+                             maxResults = 70,
+                             timeout = defaultTimeout,
+                           }) => {
   const timer = Date.now()
   const timerName = "MTransport took"
   console.info("Starting MTransport script...")
@@ -27,7 +28,7 @@ export const main = async ({
     mtransport: []
   }
   const baseUrl = 'https://www.mt.ro'
-  await page.goto(`https://www.mt.ro/web14/transparenta-decizionala/consultare-publica/acte-normative-in-avizare?limit=${limitPerPage}&start=0`)
+  throwIfNotOk(await page.goto(`https://www.mt.ro/web14/transparenta-decizionala/consultare-publica/acte-normative-in-avizare?limit=${limitPerPage}&start=0`))
   let rowCounter = 0
   let pageCounter = 0
   const cookieAcceptButton = page.locator('button.btn.btn-primary.jb.accept.blue')
@@ -70,7 +71,7 @@ export const main = async ({
   let resultsCounter = 0;
   let documentCounter = 0;
   for (const row of rows) {
-    await page.goto(`${baseUrl}${row.nameLink}`)
+    throwIfNotOk(await page.goto(`${baseUrl}${row.nameLink}`))
     const docs = page.locator('a[href^="/web14/documente/acte-normative"]')
     if (!await docs.count()) {
       console.info(`No documents found for ${row.name} (${row.nameLink}), skipping...`)
