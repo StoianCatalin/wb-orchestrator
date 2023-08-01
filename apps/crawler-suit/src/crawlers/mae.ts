@@ -12,7 +12,7 @@ const pageUrls = [
   'https://www.mae.ro/node/2011'
 ]
 
-const main = async ({
+export const main = async ({
                       headless = true,
                       timeout = defaultTimeout
                     }) => {
