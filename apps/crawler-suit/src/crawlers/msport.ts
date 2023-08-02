@@ -4,7 +4,8 @@ import {
   outputReport,
   setup,
   teardown,
-  throwIfNotOk
+  throwIfNotOk,
+  retryGoto,
 } from '../helpers';
 
 export const main = async ({
@@ -34,7 +35,7 @@ export const main = async ({
   )
 
   const rootUrl = 'https://sport.gov.ro/proiecte-legislative-in-dezbatere-publica/'
-  throwIfNotOk(await page.goto(rootUrl))
+  await retryGoto(page, rootUrl)
   console.info(`Navigated to ${page.url()} to fetch links`)
   console.info('-------------------')
   pageCounter += 1
@@ -52,7 +53,7 @@ export const main = async ({
   }
 
   for await (const link of links) {
-    throwIfNotOk(await page.goto(link))
+    await page.goto(link)
     console.info(`Navigated to ${page.url()} to fetch documents`)
     console.info('-------------------')
     pageCounter += 1
@@ -93,7 +94,7 @@ export const main = async ({
       }
     }
     for await (const separateDocLink of separateDocLinks) {
-      throwIfNotOk(await page.goto(separateDocLink))
+      await page.goto(separateDocLink)
       console.info(`Navigated to ${page.url()} to fetch the doc, as it's displayed on a separate attachment page`)
       console.info('-------------------')
       pageCounter += 1
