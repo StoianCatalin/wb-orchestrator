@@ -18,7 +18,7 @@ const setup = async ({
     headless,
     timeout,
     proxy: {
-      server: '176.124.110.231:3128',
+      server: '89.38.8.130:88',
     }
   })
   context = await browser.newContext({
