@@ -10,11 +10,10 @@ import {
 
 export const main = async ({
                              headless = true,
-                             maxLinksCount = 40,
                              timeout = defaultTimeout
                            }) => {
-  const timerName = 'MSPORT took'
-  console.info('Starting MSPORT script...')
+  const timerName = 'MSANATATII took'
+  console.info('Starting MSANATATII script...')
   console.time(timerName)
   const docCounter = {}
   const { page } = await setup({
@@ -22,7 +21,7 @@ export const main = async ({
     timeout
   })
   const output = {
-    msport: []
+    msanatatii: []
   }
   let documentCounter = 0
   let pageCounter = 0
@@ -33,103 +32,66 @@ export const main = async ({
       ? route.abort()
       : route.continue()
   )
-
-  const rootUrl = 'https://sport.gov.ro/proiecte-legislative-in-dezbatere-publica/'
+  const baseUrl = 'https://www.ms.ro'
+  const rootUrl = 'https://www.ms.ro/ro/transparenta-decizionala/acte-normative-in-transparenta/'
   throwIfNotOk(await page.goto(rootUrl))
-  console.info(`Navigated to ${page.url()} to fetch links`)
+  await page.locator('.modal-dialog button[type="submit"]').click()
+  console.info(`Navigated to ${page.url()} to page count`)
   console.info('-------------------')
   pageCounter += 1
-
-  await page.locator('a#cookie_action_close_header[role="button"]').click()
+  const lastPageUrlParts = (await page.locator('ul.pagination li.page-item.px-1.pt-1 span').textContent()).split('/')
+  const lastPageNumber = Number(lastPageUrlParts[lastPageUrlParts.length - 1])
 
   const links = []
-  let linkCounter = 0
-  for await (const link of await page.locator('.wrapper a[href*="https://sport.gov.ro"]').all()) {
-    if (linkCounter >= maxLinksCount) {
-      break
-    }
-    links.push(link.getAttribute('href'))
-    linkCounter += 1
-  }
-
-  for await (const link of links) {
-    throwIfNotOk(await page.goto(link))
-    console.info(`Navigated to ${page.url()} to fetch documents`)
+  for await (const pageUrl of Array.from({ length: lastPageNumber }, (_, i) => `${rootUrl}?page=${i + 1}`)) {
+    throwIfNotOk(await page.goto(pageUrl))
+    console.info(`Navigated to ${page.url()} to fetch links`)
     console.info('-------------------')
     pageCounter += 1
 
-    const articleName = (await page.locator('h3.article-title').textContent())
-      .trim()
-      .replaceAll(`\n`, ' ')
-      .replaceAll(`–`, '-')
-      .replaceAll(/\u00a0/g, ' ')
-      .replaceAll(/\2013/g, ' ')
-      .trim()
-    const articleDate = (await page.locator('div.article-date.cfx span.date').textContent())
-      .trim()
-      .replaceAll('.', '-')
-
-    const documents = []
-    const separateDocLinks = []
-    for await (const document of await page.locator('div.article-content a[href*="https://sport.gov.ro"]').all()) {
-      const documentUrl = await document.getAttribute('href')
-      if (documentUrl.endsWith('/')) {
-        separateDocLinks.push(documentUrl)
-      } else {
-        const documentName = (await document.textContent()).trim()
-        const documentType = getDocumentType(documentUrl)
-        documents.push({
-          date: articleDate,
-          link: documentUrl,
-          title: documentName
-            .replaceAll(`\n`, ' ')
-            .replaceAll(`–`, '-')
-            .replaceAll(/\u00a0/g, ' ')
-            .replaceAll(/\2013/g, ' ')
-            .trim(),
-          type: getDocumentType(documentUrl)
-        })
-        documentCounter += 1
-        docCounter[documentType] = (docCounter[documentType] || 0) + 1
-      }
-    }
-    for await (const separateDocLink of separateDocLinks) {
-      throwIfNotOk(await page.goto(separateDocLink))
-      console.info(`Navigated to ${page.url()} to fetch the doc, as it's displayed on a separate attachment page`)
-      console.info('-------------------')
-      pageCounter += 1
-      const documentLink = page.locator('div.article-content a[href*="https://sport.gov.ro"]')
-      const documentUrl = await documentLink.getAttribute('href')
-      const documentName = (await documentLink.textContent()).trim()
-      const documentType = getDocumentType(documentUrl)
-      documents.push({
-        date: articleDate,
-        link: documentUrl,
-        title: documentName
-          .replaceAll(`\n`, ' ')
-          .replaceAll(`–`, '-')
-          .replaceAll(/\u00a0/g, ' ')
-          .replaceAll(/\2013/g, ' ')
-          .trim(),
-        type: getDocumentType(documentUrl)
-      })
-      documentCounter += 1
-      docCounter[documentType] = (docCounter[documentType] || 0) + 1
-    }
-    if (documents.length > 0) {
-      output.msport.push({
-        currentUrl: page.url(),
-        documents,
-        date: articleDate,
-        name: articleName,
-      })
+    for await (const link of await page.locator('h4 a[href^="/ro/transparenta-decizionala/acte-normative-in-transparenta/"]').all()) {
+      links.push(await link.getAttribute('href'))
     }
   }
 
+  for await (const link of links) {
+    throwIfNotOk(await page.goto(`${baseUrl}${link}`))
+    console.info(`Navigated to ${page.url()} to fetch documents`)
+    console.info('-------------------')
+    pageCounter += 1
+    const articleDateParts = (await page.locator('.article-date-wrapper').textContent()).trim().split(' ')
+    const articleDate = `${articleDateParts[0].padStart(2, '0')}-${getMonthFromROString(articleDateParts[1])}-${articleDateParts[2]}`
+    const documents = []
+
+    for await (const docLink of await page.locator('.section.blog-post a[href^="/media/documents"]').all()) {
+      const docUrl = await docLink.getAttribute('href')
+      const docName = (await docLink.textContent()).trim()
+      const docType = getDocumentType(docUrl)
+      documents.push({
+        date: articleDate,
+        link: `${baseUrl}${docUrl}`,
+        title: docName,
+        type: docType
+      })
+      docCounter[docType] = (docCounter[docType] || 0) + 1
+      documentCounter += 1
+    }
+
+    output.msanatatii.push({
+      currentUrl: page.url(),
+      date: articleDate,
+      name: (await page.locator('h2.title.article').textContent()).trim(),
+      documents
+    })
+
+    console.info(`Setting a timer of .25 seconds, as the nginx server is blocking requests if done too fast - 429 Too many requests`)
+    console.info('-------------------')
+    await page.waitForTimeout(250)
+  }
 
   await teardown()
   console.timeEnd(timerName)
-  outputReport(output.msport, docCounter, documentCounter, pageCounter)
+  outputReport(output.msanatatii, docCounter, documentCounter, pageCounter)
 
   return output
 }
