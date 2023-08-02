@@ -17,6 +17,9 @@ const setup = async ({
     // args: ['--ignore-certificate-errors', '--disable-http2'],
     headless,
     timeout,
+    proxy: {
+      server: '176.124.110.231:3128',
+    }
   })
   context = await browser.newContext({
     // ignoreHTTPSErrors: true,
