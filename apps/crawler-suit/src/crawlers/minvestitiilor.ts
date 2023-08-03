@@ -3,8 +3,7 @@ import {
   getDocumentType,
   outputReport,
   setup,
-  teardown,
-  throwIfNotOk
+  teardown
 } from '../helpers';
 
 export const main = async ({
@@ -36,6 +35,7 @@ export const main = async ({
   await page.route('**/*', (route) =>
     route.request().resourceType() === 'image' ||
     route.request().url().endsWith('.css') ||
+    route.request().url().includes('stylesheet?id') ||
     route.request().url().endsWith('.js')
       ? route.abort()
       : route.continue()
@@ -46,10 +46,16 @@ export const main = async ({
   for await (const urlToParse of urlsToParse) {
     let articlesTableFound = false
     while (!articlesTableFound) {
-      throwIfNotOk(await page.goto(urlToParse, {
+      const response = await page.goto(urlToParse, {
         timeout: 5 * 1000,
         waitUntil: 'networkidle'
-      }))
+      })
+      if (response.status() === 503) {
+        await page.goto(urlToParse, {
+          timeout: 5 * 1000,
+          waitUntil: 'networkidle'
+        })
+      }
       console.info(`Navigated to ${page.url()} to fetch articles, dates, documents from table rows`)
       console.info('-------------------')
       pageCounter += 1

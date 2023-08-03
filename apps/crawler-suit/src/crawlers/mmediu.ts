@@ -4,8 +4,7 @@ import {
   getMonthFromROString,
   outputReport,
   setup,
-  teardown,
-  throwIfNotOk
+  teardown
 } from '../helpers';
 
 export const main = async ({
@@ -29,15 +28,20 @@ export const main = async ({
   await page.route('**/*', (route) =>
     route.request().resourceType() === 'image' ||
     route.request().url().endsWith('.css') ||
+    route.request().url().includes('stylesheet?id') ||
     route.request().url().endsWith('.js')
       ? route.abort()
       : route.continue()
   )
   const baseUrl = 'http://www.mmediu.ro'
   const rootUrl = 'http://www.mmediu.ro/categories/view/proiecte-de-acte-normative/41/page:'
+  const response = await page.goto(baseUrl)
+  if (response.status() === 503) {
+    await page.goto(baseUrl)
+  }
   const links = []
   for await (const pageNumber of Array(maxPages).keys()) {
-    throwIfNotOk(await page.goto(`${rootUrl}${pageNumber + 1}`))
+    await page.goto(`${rootUrl}${pageNumber + 1}`)
     console.info(`Navigated to ${page.url()} to fetch links`)
     console.info('-------------------')
     pageCounter += 1
@@ -46,7 +50,7 @@ export const main = async ({
     }
   }
   for await (const link of links) {
-    throwIfNotOk(await page.goto(link))
+    await page.goto(link)
     await page.waitForLoadState('networkidle')
     console.info(`Navigated to ${page.url()} to fetch documents`)
     console.info('-------------------')

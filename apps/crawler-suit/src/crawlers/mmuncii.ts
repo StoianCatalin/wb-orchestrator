@@ -3,8 +3,7 @@ import {
   getDocumentType,
   outputReport,
   setup,
-  teardown,
-  throwIfNotOk
+  teardown
 } from '../helpers';
 
 export const main = async ({
@@ -28,6 +27,7 @@ export const main = async ({
   await page.route('**/*', (route) =>
     route.request().resourceType() === 'image' ||
     route.request().url().endsWith('.css') ||
+    route.request().url().includes('stylesheet?id') ||
     route.request().url().endsWith('.js')
       ? route.abort()
       : route.continue()
@@ -36,7 +36,10 @@ export const main = async ({
   const baseUrl = 'https://mmuncii.ro'
   const rootUrl = 'https://mmuncii.ro/j33/index.php/ro/transparenta/proiecte-in-dezbatere'
 
-  throwIfNotOk(await page.goto(rootUrl))
+  const response = await page.goto(rootUrl)
+  if (response.status() === 503) {
+    await page.goto(rootUrl)
+  }
   console.info(`Navigated to ${page.url()} to fetch articles`)
   console.info('-------------------')
   pageCounter += 1
@@ -48,7 +51,7 @@ export const main = async ({
   }
 
   for await (const articleUrl of articleUrls) {
-    throwIfNotOk(await page.goto(`${baseUrl}${articleUrl}`))
+    await page.goto(`${baseUrl}${articleUrl}`)
     console.info(`Navigated to ${page.url()} to fetch documents`)
     console.info('-------------------')
     pageCounter += 1

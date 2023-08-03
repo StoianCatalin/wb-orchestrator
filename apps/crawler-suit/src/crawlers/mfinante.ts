@@ -3,8 +3,7 @@ import {
   getDocumentType,
   outputReport,
   setup,
-  teardown,
-  throwIfNotOk
+  teardown
 } from '../helpers';
 
 export const main = async ({
@@ -22,6 +21,11 @@ export const main = async ({
   const output = {
     mfinante: []
   }
+  await page.route('**/*', (route) =>
+    route.request().url().includes('stylesheet?id')
+      ? route.abort()
+      : route.continue()
+  )
   let documentCounter = 0
   const baseUrl = 'https://mfinante.gov.ro'
   const pagePrefix = `https://mfinante.gov.ro/ro/acasa/transparenta/proiecte-acte-normative
@@ -33,7 +37,11 @@ export const main = async ({
 &p_r_p_resetCur=false
 &_com_liferay_asset_publisher_web_portlet_AssetPublisherPortlet_INSTANCE_Bg185RyrkUe4_cur=`
 
-  throwIfNotOk(await page.goto('https://mfinante.gov.ro/ro/acasa/transparenta/proiecte-acte-normative'))
+  const rootUrl = 'https://mfinante.gov.ro/ro/acasa/transparenta/proiecte-acte-normative'
+  const response = await page.goto(rootUrl)
+  if (response.status() === 503) {
+    await page.goto(rootUrl)
+  }
   console.info(`Navigated to ${page.url()} to fetch page count`)
   console.info('-------------------')
   const pageCounter = Number((
@@ -43,7 +51,7 @@ export const main = async ({
 
   const pageIndices = [...Array(pageCounter).keys()].map(i => i + 1)
   for await (const pageIndex of pageIndices) {
-    throwIfNotOk(await page.goto(`${pagePrefix}${pageIndex}`))
+    await page.goto(`${pagePrefix}${pageIndex}`)
     console.info(`Navigated to ${page.url()} to fetch documents\n`)
     console.info('-------------------')
     try {

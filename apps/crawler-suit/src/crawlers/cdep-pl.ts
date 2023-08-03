@@ -5,7 +5,6 @@ import {
   outputReport,
   setup,
   teardown,
-  throwIfNotOk,
 } from '../helpers';
 
 export const main = async ({
@@ -27,10 +26,19 @@ export const main = async ({
   const output = {
     camera_deputatilor_pl: []
   }
+  await page.route('**/*', (route) =>
+    route.request().url().includes('stylesheet?id')
+      ? route.abort()
+      : route.continue()
+  )
   const today = new Date()
   const formattedToday = `${today.getDate().toString().padStart(2, '0')}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getFullYear()}`
   const baseUrl = 'https://www.cdep.ro'
-  throwIfNotOk(await page.goto(`https://www.cdep.ro/pls/caseta/eCaseta2015.OrdineZi?dat=${timestamp ? getDate(timestamp) : ''}`))
+  const rootUrl = `https://www.cdep.ro/pls/caseta/eCaseta2015.OrdineZi?dat=${timestamp ? getDate(timestamp) : ''}`
+  const response = await page.goto(rootUrl)
+  if (response.status() === 503) {
+    await page.goto(rootUrl)
+  }
   console.info(`Navigated to ${page.url()} to fetch links`)
   console.info('-------------------')
   pageCounter += 1
@@ -61,7 +69,7 @@ export const main = async ({
 
   let currentLinkIndex = 0
   for await (const link of links) {
-    throwIfNotOk(await page.goto(`${baseUrl}${link}`))
+    await page.goto(`${baseUrl}${link}`)
     console.info(`Navigated to ${page.url()} to fetch details and documents`)
     console.info('-------------------')
     pageCounter += 1

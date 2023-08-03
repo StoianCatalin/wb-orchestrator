@@ -3,8 +3,7 @@ import {
   getDocumentType,
   outputReport,
   setup,
-  teardown,
-  throwIfNotOk
+  teardown
 } from '../helpers';
 
 export const main = async ({
@@ -27,12 +26,16 @@ export const main = async ({
   await page.route('**/*', (route) =>
     route.request().resourceType() === 'image' ||
     route.request().url().endsWith('.css') ||
+    route.request().url().includes('stylesheet?id') ||
     route.request().url().endsWith('.js')
       ? route.abort()
       : route.continue()
   )
   const baseUrl = 'https://turism.gov.ro/web/category/consultare-publica/'
-  throwIfNotOk(await page.goto(baseUrl))
+  const response = await page.goto(baseUrl)
+  if (response.status() === 503) {
+    await page.goto(baseUrl)
+  }
   console.info(`Navigated to ${page.url()} to fetch page count`)
   pageCounter += 1
   const lastPageUrlParts = (await page.locator('.pag-last a').getAttribute('href')).split('/')
@@ -43,7 +46,7 @@ export const main = async ({
 
   const articleLinks = []
   for await (const pageUrl of Array.from({ length: lastPageNumber }, (_, i) => `${baseUrl}page/${i + 1}/`)) {
-    throwIfNotOk(await page.goto(pageUrl))
+    await page.goto(pageUrl)
     console.info(`Navigated to ${page.url()} to fetch links`)
     console.info('-------------------')
     pageCounter += 1
@@ -66,7 +69,7 @@ export const main = async ({
   console.info('-------------------')
 
   for await (const articleLink of articleLinks) {
-    throwIfNotOk(await page.goto(articleLink))
+    await page.goto(articleLink)
     const currentPageUrl = page.url()
     console.info(`Navigated to ${currentPageUrl} to fetch documents`)
     console.info('-------------------')

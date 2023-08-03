@@ -5,7 +5,6 @@ import {
   outputReport,
   setup,
   teardown,
-  throwIfNotOk
 } from '../helpers';
 
 export const main = async ({
@@ -29,6 +28,7 @@ export const main = async ({
   await page.route('**/*', (route) =>
     route.request().resourceType() === 'image' ||
     route.request().url().endsWith('.css') ||
+    route.request().url().includes('stylesheet?id') ||
     route.request().url().endsWith('.js')
       ? route.abort()
       : route.continue()
@@ -36,7 +36,10 @@ export const main = async ({
 
   const baseUrl = 'https://www.madr.ro'
   const rootUrl = 'https://www.madr.ro/proiecte-de-acte-normative.html'
-  throwIfNotOk(await page.goto(rootUrl))
+  const response = await page.goto(rootUrl)
+  if (response.status() === 503) {
+    await page.goto(rootUrl)
+  }
   console.info(`Navigated to ${page.url()} to fetch page count`)
   console.info('-------------------')
   pageCounter += 1
@@ -49,7 +52,7 @@ export const main = async ({
   let counter = 0
   const items = []
   while (true) {
-    throwIfNotOk(await page.goto(`${rootUrl}?start=${indexes[counter]}`))
+    await page.goto(`${rootUrl}?start=${indexes[counter]}`)
     console.info(`Navigated to ${page.url()} to fetch links, documents`)
     console.info('-------------------')
     pageCounter += 1

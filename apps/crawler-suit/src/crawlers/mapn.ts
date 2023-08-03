@@ -4,7 +4,6 @@ import {
   outputReport,
   setup,
   teardown,
-  throwIfNotOk
 } from '../helpers';
 
 export const main = async ({
@@ -26,12 +25,17 @@ export const main = async ({
   let pageCounter = 0
   await page.route('**/*', (route) =>
     route.request().resourceType() === 'image' ||
+    route.request().url().includes('stylesheet?id') ||
     route.request().url().endsWith('.css')
       ? route.abort()
       : route.continue()
   )
 
-  throwIfNotOk(await page.goto('https://sg.mapn.ro/transparenta'))
+  const rootUrl = 'https://sg.mapn.ro/transparenta'
+  const response = await page.goto(rootUrl)
+  if (response.status() === 503) {
+    await page.goto(rootUrl)
+  }
   console.info(`Navigated to ${page.url()} to change years filter`)
   console.info('-------------------')
   pageCounter += 1

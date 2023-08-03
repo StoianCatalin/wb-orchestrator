@@ -4,14 +4,13 @@ import {
   outputReport,
   getMonthFromROString,
   setup,
-  teardown,
-  throwIfNotOk
+  teardown
 } from '../helpers';
 
 export const main = async ({
                              headless = true,
-                             limitPerPage = 30,
-                             maxResults = 70,
+                             limitPerPage = 20,
+                             maxResults = 40,
                              timeout = defaultTimeout,
                            }) => {
   const timer = Date.now()
@@ -27,8 +26,19 @@ export const main = async ({
   const output = {
     mtransport: []
   }
+  await page.route('**/*', (route) =>
+    route.request().resourceType() === 'image' ||
+    route.request().url().endsWith('.css') ||
+    route.request().url().includes('stylesheet?id')
+      ? route.abort()
+      : route.continue()
+  )
   const baseUrl = 'https://www.mt.ro'
-  throwIfNotOk(await page.goto(`https://www.mt.ro/web14/transparenta-decizionala/consultare-publica/acte-normative-in-avizare?limit=${limitPerPage}&start=0`))
+  const rootUrl = `https://www.mt.ro/web14/transparenta-decizionala/consultare-publica/acte-normative-in-avizare?limit=${limitPerPage}&start=0`
+  const response = await page.goto(rootUrl)
+  if (response.status() === 503) {
+    await page.goto(rootUrl)
+  }
   let rowCounter = 0
   let pageCounter = 0
   const cookieAcceptButton = page.locator('button.btn.btn-primary.jb.accept.blue')
@@ -71,7 +81,7 @@ export const main = async ({
   let resultsCounter = 0;
   let documentCounter = 0;
   for (const row of rows) {
-    throwIfNotOk(await page.goto(`${baseUrl}${row.nameLink}`))
+    await page.goto(`${baseUrl}${row.nameLink}`)
     const docs = page.locator('a[href^="/web14/documente/acte-normative"]')
     if (!await docs.count()) {
       console.info(`No documents found for ${row.name} (${row.nameLink}), skipping...`)

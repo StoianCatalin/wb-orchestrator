@@ -4,8 +4,7 @@ import {
   getMonthFromROString,
   outputReport,
   setup,
-  teardown,
-  throwIfNotOk
+  teardown
 } from '../helpers';
 
 export const main = async ({
@@ -28,12 +27,16 @@ export const main = async ({
   await page.route('**/*', (route) =>
     route.request().resourceType() === 'image' ||
     route.request().url().endsWith('.css') ||
+    route.request().url().includes('stylesheet?id') ||
     route.request().url().endsWith('.js')
       ? route.abort()
       : route.continue()
   )
   const urlPrefix = 'https://economie.gov.ro/proiecte-de-acte-normative-aflate-in-consultare-publica/'
-  throwIfNotOk(await page.goto(urlPrefix))
+  const response = await page.goto(urlPrefix)
+  if (response.status() === 503) {
+    await page.goto(urlPrefix)
+  }
   console.info(`Navigated to ${page.url()} to fetch last page from pagination`)
   console.info('-------------------')
   pageCounter += 1
@@ -42,7 +45,7 @@ export const main = async ({
   const lastPageNumber = Number(await mainWrapper.locator('.pt-cv-pagination .cv-pageitem-number').last().textContent())
 
   for await (const currentPageNumber of Array(lastPageNumber).keys()) {
-    throwIfNotOk(await page.goto(`${urlPrefix}?_page=${currentPageNumber + 1}`))
+    await page.goto(`${urlPrefix}?_page=${currentPageNumber + 1}`)
     console.info(`Navigated to ${page.url()} to fetch names, dates and documents`)
     console.info('-------------------')
     pageCounter += 1

@@ -4,13 +4,12 @@ import {
   getMonthFromROString,
   outputReport,
   setup,
-  teardown,
-  throwIfNotOk
+  teardown
 } from '../helpers';
 
 export const main = async ({
                              headless = true,
-                             maxLinksCount = 100,
+                             maxLinksCount = 50,
                              timeout = defaultTimeout
                            }) => {
   const timerName = 'MCULTURII took'
@@ -29,6 +28,7 @@ export const main = async ({
   await page.route('**/*', (route) =>
     route.request().resourceType() === 'image' ||
     route.request().url().endsWith('.css') ||
+    route.request().url().includes('stylesheet?id') ||
     route.request().url().endsWith('.js')
       ? route.abort()
       : route.continue()
@@ -36,7 +36,10 @@ export const main = async ({
 
   const baseUrl = 'http://www.cultura.ro'
   const rootUrl = 'http://www.cultura.ro/proiecte-acte-normative/'
-  throwIfNotOk(await page.goto(rootUrl))
+  const response = await page.goto(rootUrl)
+  if (response.status() === 503) {
+    await page.goto(rootUrl)
+  }
   console.info(`Navigated to ${page.url()} to fetch links`)
   console.info('-------------------')
 
@@ -50,7 +53,7 @@ export const main = async ({
 
   let linkCounter = 0
   for await (const link of links) {
-    throwIfNotOk(await page.goto(`${baseUrl}${link}`))
+    await page.goto(`${baseUrl}${link}`)
     console.info(`Navigated to ${page.url()} to fetch data`)
     console.info('-------------------')
     pageCounter += 1

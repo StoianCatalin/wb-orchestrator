@@ -4,8 +4,7 @@ import {
   getMonthFromROString,
   outputReport,
   setup,
-  teardown,
-  throwIfNotOk
+  teardown
 } from '../helpers';
 
 export const main = async ({
@@ -28,13 +27,17 @@ export const main = async ({
   await page.route('**/*', (route) =>
     route.request().resourceType() === 'image' ||
     route.request().url().endsWith('.css') ||
+    route.request().url().includes('stylesheet?id') ||
     route.request().url().endsWith('.js')
       ? route.abort()
       : route.continue()
   )
   const baseUrl = 'https://www.ms.ro'
   const rootUrl = 'https://www.ms.ro/ro/transparenta-decizionala/acte-normative-in-transparenta/'
-  throwIfNotOk(await page.goto(rootUrl))
+  const response = await page.goto(rootUrl)
+  if (response.status() === 503) {
+    await page.goto(rootUrl)
+  }
   await page.locator('.modal-dialog button[type="submit"]').click()
   console.info(`Navigated to ${page.url()} to page count`)
   console.info('-------------------')
@@ -44,7 +47,7 @@ export const main = async ({
 
   const links = []
   for await (const pageUrl of Array.from({ length: lastPageNumber }, (_, i) => `${rootUrl}?page=${i + 1}`)) {
-    throwIfNotOk(await page.goto(pageUrl))
+    await page.goto(pageUrl)
     console.info(`Navigated to ${page.url()} to fetch links`)
     console.info('-------------------')
     pageCounter += 1
@@ -55,7 +58,7 @@ export const main = async ({
   }
 
   for await (const link of links) {
-    throwIfNotOk(await page.goto(`${baseUrl}${link}`))
+    await page.goto(`${baseUrl}${link}`)
     console.info(`Navigated to ${page.url()} to fetch documents`)
     console.info('-------------------')
     pageCounter += 1

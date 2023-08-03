@@ -3,9 +3,7 @@ import {
   getDocumentType,
   outputReport,
   setup,
-  teardown,
-  throwIfNotOk,
-  retryGoto,
+  teardown
 } from '../helpers';
 
 export const main = async ({
@@ -28,6 +26,7 @@ export const main = async ({
   let pageCounter = 0
   await page.route('**/*', (route) =>
     route.request().resourceType() === 'image' ||
+    route.request().url().includes('stylesheet?id') ||
     route.request().url().endsWith('.css') ||
     route.request().url().endsWith('.js')
       ? route.abort()
@@ -35,7 +34,10 @@ export const main = async ({
   )
 
   const rootUrl = 'https://sport.gov.ro/proiecte-legislative-in-dezbatere-publica/'
-  await retryGoto(page, rootUrl)
+  const response = await page.goto(rootUrl)
+  if (response.status() === 503) {
+    await page.goto(rootUrl)
+  }
   console.info(`Navigated to ${page.url()} to fetch links`)
   console.info('-------------------')
   pageCounter += 1

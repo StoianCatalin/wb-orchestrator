@@ -3,8 +3,7 @@ import {
   getDocumentType,
   outputReport,
   setup,
-  teardown,
-  throwIfNotOk
+  teardown
 } from '../helpers';
 
 export const main = async ({
@@ -22,10 +21,19 @@ export const main = async ({
   const output = {
     meducatiei: []
   }
+  await page.route('**/*', (route) =>
+    route.request().url().includes('stylesheet?id')
+      ? route.abort()
+      : route.continue()
+  )
   let documentCounter = 0
   let pageCounter = 0
   const baseUrl = 'https://www.edu.ro'
-  throwIfNotOk(await page.goto('https://www.edu.ro/proiecte-acte-normative'))
+  const rootUrl = 'https://www.edu.ro/proiecte-acte-normative'
+  const response = await page.goto(rootUrl)
+  if (response.status() === 503) {
+    await page.goto(rootUrl)
+  }
   console.info(`Navigated to ${page.url()} to fetch pages`)
   console.info('-------------------')
   let nextPageLink = page.locator('li[class*="pager-next"] > a')
@@ -47,7 +55,7 @@ export const main = async ({
   } while (true)
 
   for await (const link of links) {
-    throwIfNotOk(await page.goto(!link.includes('https://') ? `${baseUrl}${link}` : link))
+    await page.goto(!link.includes('https://') ? `${baseUrl}${link}` : link)
     await page.waitForLoadState('networkidle')
     console.info(`Navigated to ${page.url()} to fetch documents`)
     console.info('-------------------')

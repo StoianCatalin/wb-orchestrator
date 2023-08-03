@@ -4,8 +4,7 @@ import {
   getMonthFromROString,
   outputReport,
   setup,
-  teardown,
-  throwIfNotOk
+  teardown
 } from '../helpers';
 
 export const main = async ({
@@ -28,12 +27,16 @@ export const main = async ({
   await page.route('**/*', (route) =>
     route.request().resourceType() === 'image' ||
     route.request().url().endsWith('.css') ||
+    route.request().url().includes('stylesheet?id') ||
     route.request().url().endsWith('.js')
       ? route.abort()
       : route.continue()
   )
   const urlPrefix = 'https://energie.gov.ro/category/transparenta-institutionala/transparenta-decizionala/page/1/'
-  throwIfNotOk(await page.goto(urlPrefix))
+  const response = await page.goto(urlPrefix)
+  if (response.status() === 503) {
+    await page.goto(urlPrefix)
+  }
   console.info(`Navigated to ${page.url()} to fetch pages`)
   console.info('-------------------')
 
@@ -66,7 +69,7 @@ export const main = async ({
   } while (true)
 
   for await (const item of output.menergiei) {
-    throwIfNotOk(await page.goto(item.currentUrl))
+    await page.goto(item.currentUrl)
     // await page.waitForLoadState('networkidle')
     console.info(`Navigated to ${page.url()} to fetch documents`)
     console.info('-------------------')

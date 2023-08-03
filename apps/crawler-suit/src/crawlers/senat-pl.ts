@@ -4,8 +4,7 @@ import {
   getDocumentType,
   outputReport,
   setup,
-  teardown,
-  throwIfNotOk
+  teardown
 } from '../helpers';
 
 export const main = async ({
@@ -26,11 +25,19 @@ export const main = async ({
   const output = {
     senat_pl: []
   }
+  await page.route('**/*', (route) =>
+    route.request().url().includes('stylesheet?id')
+      ? route.abort()
+      : route.continue()
+  )
   const today = new Date()
   const formattedToday = `${today.getDate().toString().padStart(2, '0')}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getFullYear()}`
 
   const baseUrl = 'https://www.senat.ro/'
-  throwIfNotOk(await page.goto('https://www.senat.ro/'))
+  const response = await page.goto(baseUrl)
+  if (response.status() === 503) {
+    await page.goto(baseUrl)
+  }
   console.info(`Navigated to ${page.url()} to click on Expand button`)
   console.info('-------------------')
   pageCounter += 1
@@ -83,7 +90,7 @@ export const main = async ({
   }
   const plLinks = new Set()
   for await (const link of links) {
-    throwIfNotOk(await page.goto(link))
+    await page.goto(link)
     console.info(`Navigated to ${page.url()} to fetch links to PLs`)
     console.info('-------------------')
     pageCounter += 1
@@ -103,7 +110,7 @@ export const main = async ({
     'Opiniile persoanelor interesate asupra propunerilor legislative aflate în consultare publică'
   ]
   for await (const plLink of plLinks.values()) {
-    throwIfNotOk(await page.goto(plLink))
+    await page.goto(plLink)
     console.info(`Navigated to ${page.url()} to fetch PL details and documents`)
     console.info('-------------------')
     pageCounter += 1
