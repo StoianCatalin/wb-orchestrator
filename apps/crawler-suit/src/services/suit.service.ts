@@ -175,7 +175,6 @@ export class SuitService {
           url: project.currentUrl,
         });
         lastDownloadedDocument = await this.updateDocumentsForProject(remoteProject.id, project.documents, [], this.configService.get('scrapper_name'));
-        break;
       } else {
         lastDownloadedDocument = await this.updateDocumentsForProject(projectExists[0].id, project.documents, projectExists[0].documents, this.configService.get('scrapper_name'));
       }
@@ -197,7 +196,6 @@ export class SuitService {
         }
         if (!remoteDocument && document.title) {
           try {
-            console.log(document.date);
             const newDocument = await this.apiService.createDocument({
               identifier: `${getCrawlerId(source)}${getDocumentId()}`,
               title: document.title,
@@ -226,7 +224,6 @@ export class SuitService {
           } catch (e) {
             console.log('Cannot create document', document.link, e.message);
           }
-          break;
         }
       } catch (e: any) {
         console.log(e);
