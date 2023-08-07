@@ -38,4 +38,6 @@ COPY --from=builder /usr/src/app/dist/apps/$project ./dist
 
 RUN export NODE_TLS_REJECT_UNAUTHORIZED=0
 
-CMD [ "NODE_EXTRA_CA_CERTS=node_modules/node_extra_ca_certs_mozilla_bundle/ca_bundle/ca_intermediate_root_bundle.pem", "node", "dist/main.js" ]
+RUN export NODE_EXTRA_CA_CERTS=node_modules/node_extra_ca_certs_mozilla_bundle/ca_bundle/ca_intermediate_root_bundle.pem
+
+CMD [ "node", "dist/main.js" ]
