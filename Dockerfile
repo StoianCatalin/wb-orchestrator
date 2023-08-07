@@ -36,4 +36,6 @@ RUN yarn install --production --frozen-lockfile
 
 COPY --from=builder /usr/src/app/dist/apps/$project ./dist
 
+RUN export NODE_TLS_REJECT_UNAUTHORIZED=0
+
 CMD [ "node", "dist/main.js" ]
