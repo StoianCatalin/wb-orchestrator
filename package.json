@@ -32,6 +32,7 @@
     "joi": "^17.7.0",
     "moment": "^2.29.4",
     "nestjs-joi": "^1.9.0",
+    "node_extra_ca_certs_mozilla_bundle": "^1.0.5",
     "playwright": "^1.30.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
