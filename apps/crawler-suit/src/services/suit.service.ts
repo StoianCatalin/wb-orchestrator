@@ -195,7 +195,6 @@ export class SuitService {
           continue;
         }
         if (!remoteDocument && document.title) {
-          console.log(document);
           try {
             const newDocument = await this.apiService.createDocument({
               identifier: `${getCrawlerId(source)}${getDocumentId()}`,
