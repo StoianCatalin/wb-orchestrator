@@ -20,7 +20,7 @@ export const main = async ({
     timeout
   })
   const output = {
-    mjustitiei: []
+    mjustitie: []
   }
   let documentCounter = 0
   let pageCounter = 0
@@ -92,11 +92,11 @@ export const main = async ({
     items[currentIndex].documents = documents
     currentIndex += 1
   }
-  output.mjustitiei = items
+  output.mjustitie = items
 
   await teardown()
   console.timeEnd(timerName)
-  outputReport(output.mjustitiei, docCounter, documentCounter, pageCounter)
+  outputReport(output.mjustitie, docCounter, documentCounter, pageCounter)
 
   return output
 }
