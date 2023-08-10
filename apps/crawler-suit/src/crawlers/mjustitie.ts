@@ -8,7 +8,7 @@ import {
 
 export const main = async ({
                              headless = true,
-                             maxPages = 30,
+                             maxPages = 20,
                              timeout = defaultTimeout
                            }) => {
   const timerName = 'MJustitiei took'

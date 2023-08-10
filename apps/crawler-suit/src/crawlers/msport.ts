@@ -8,7 +8,7 @@ import {
 
 export const main = async ({
                              headless = true,
-                             maxLinksCount = 40,
+                             maxLinksCount = 5,
                              timeout = defaultTimeout
                            }) => {
   const timerName = 'MSPORT took'

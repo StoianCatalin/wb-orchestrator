@@ -8,8 +8,8 @@ import {
 
 export const main = async ({
                              headless = true,
-                             maxArticles = 100,
-                             maxResults = 100,
+                             maxArticles = 10,
+                             maxResults = 10,
                              timeout = defaultTimeout
                            }) => {
   const timer = Date.now()
@@ -21,7 +21,7 @@ export const main = async ({
     headless,
     timeout
   })
-  const output = {
+  const output = {s
     mdezvoltarii: []
   }
   await page.route('**/*', (route) =>

@@ -27,9 +27,6 @@ export const main = async ({
   const urlsToParse = [
     'https://mfe.gov.ro/informatii-de-interes-public/acte-normative-in-consultare-publica/',
     'http://mfe.gov.ro/arhiva-acte-normative-in-consultare-publica-2022/',
-    'http://mfe.gov.ro/arhiva-acte-normative-in-consultare-publica-2021/',
-    'http://mfe.gov.ro/arhiva-acte-normative-in-consultare-publica-2020/',
-    'http://mfe.gov.ro/arhiva-acte-normative-in-consultare-publica-2019/'
   ]
 
   await page.route('**/*', (route) =>
