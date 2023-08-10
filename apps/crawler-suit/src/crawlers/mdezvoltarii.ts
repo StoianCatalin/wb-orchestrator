@@ -21,7 +21,7 @@ export const main = async ({
     headless,
     timeout
   })
-  const output = {s
+  const output = {
     mdezvoltarii: []
   }
   await page.route('**/*', (route) =>
