@@ -78,10 +78,12 @@ export const main = async ({
         documentCounter += 1
         docCounter[docType] = (docCounter[docType] || 0) + 1
       }
+      const articleName = itemContentParts[0].split('În conformitate cu prevederile Legii')
       const item = {
         currentUrl: page.url(),
         date: itemDate,
-        name: itemContentParts[0]
+        name: articleName[0]
+          .trim()
           .replaceAll('&nbsp;', ' ')
           .replaceAll(`–`, '-')
           .replace(/(<([^>]+)>)/gi, ''),
