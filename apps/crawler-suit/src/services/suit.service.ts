@@ -34,6 +34,7 @@ import {downloadFileAndReturnHash} from "@app/common/utils/downloadFileAndReturn
 import {RobotStatus} from "@app/common/interfaces/Robot";
 import getCrawlerId from "../utils/get_crawler_id";
 import getDocumentId from "../utils/getDocumentId";
+import {teardown} from "../helpers";
 
 
 @Injectable()
@@ -68,6 +69,7 @@ export class SuitService {
       });
     } catch (e) {
       console.log(e);
+      await teardown();
       const urlRegex = /(https?:\/\/[^\s]+)/;
       const url = e.message.match(urlRegex) && e.message.match(urlRegex).length > 1 && e.message.match(urlRegex)[1];
       await this.apiService.updateRobot(robot.id, {
