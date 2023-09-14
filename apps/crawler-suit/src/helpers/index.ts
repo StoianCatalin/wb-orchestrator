@@ -31,6 +31,7 @@ const setup = async ({
 
 const teardown = async (waitForMs = 0) => {
   await page.waitForTimeout(waitForMs)
+  await page.close();
   await context.close()
   await browser.close()
 }
