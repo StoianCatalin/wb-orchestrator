@@ -61,6 +61,7 @@ export class SuitService {
     const robot = await this.checkIfRobotExists();
     try {
       const result = await this.chooseAndRunCrawler();
+      await teardown();
       const nameOfLastDocument = robot_name === 'camera_deputatilor_pl' || robot_name === 'senat_pl' ?
         await this.postScrapingWithFields(result) : await this.postScrapping(result);
       await this.apiService.updateRobot(robot.id, {
