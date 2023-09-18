@@ -30,10 +30,12 @@ const setup = async ({
 }
 
 const teardown = async (waitForMs = 0) => {
-  await page.waitForTimeout(waitForMs)
+  // await page.waitForTimeout(waitForMs)
   await page.close();
   await context.close()
   await browser.close()
+  // wait 5 seconds
+  await new Promise((resolve) => setTimeout(() => resolve(true), 5000));
 }
 
 const getDate = (timestamp = Date.now()) => {
