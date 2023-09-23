@@ -27,6 +27,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3004:3003
     environment:
@@ -49,6 +50,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3005:3003
     environment:
@@ -71,6 +73,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3006:3003
     environment:
@@ -93,6 +96,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3007:3003
     environment:
@@ -115,6 +119,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3008:3003
     environment:
@@ -137,6 +142,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3009:3003
     environment:
@@ -159,6 +165,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3010:3003
     environment:
@@ -181,6 +188,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3011:3003
     environment:
@@ -203,6 +211,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3012:3003
     environment:
@@ -225,6 +234,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3013:3003
     environment:
@@ -247,6 +257,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3014:3003
     environment:
@@ -269,6 +280,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3015:3003
     environment:
@@ -291,6 +303,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3016:3003
     environment:
@@ -308,6 +321,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3017:3003
     environment:
@@ -325,6 +339,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3018:3003
     environment:
@@ -342,6 +357,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3019:3003
     environment:
@@ -359,6 +375,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3020:3003
     environment:
@@ -376,6 +393,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3021:3003
     environment:
@@ -393,6 +411,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3022:3003
     environment:
@@ -410,6 +429,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3023:3003
     environment:
@@ -427,6 +447,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3024:3003
     environment:
@@ -444,6 +465,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3025:3003
     environment:
@@ -461,6 +483,7 @@ services:
       args:
         project: crawler-suit
     restart: on-failure
+    init: true
     ports:
       - 3026:3003
     environment:
@@ -471,27 +494,6 @@ services:
       - '/opt/storage:/opt/storage'
     networks:
       - backend
-
-#  senat-crawler-suit:
-#    build:
-#      context: .
-#      args:
-#        project: crawler-suit
-#    ports:
-#      - 3010:3003
-#    environment:
-#      - SCRAPPER_NAME=senat
-#    env_file:
-#      - .env.crawler
-#    volumes:
-#      - '/opt/storage:/opt/storage'
-#    networks:
-#      - backend
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: '2.0'
-#          memory: 2048M
 
 networks:
   backend:
